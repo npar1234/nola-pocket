@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0c15">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NOLA Pocket">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>NOLA Pocket</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#f1ece1; --surface:#faf7f0; --raise:#ffffff; --ink:#1b1922; --muted:#6c675b; --rule:#d9d1bf;
+  --brass:#8d6a1b; --brass-soft:#ead9ae; --brass-ink:#5a4310; --ok:#2e5d3a; --ok-soft:#d3e5d4; --skip:#8a3a2e; --skip-soft:#efd6d0;
+  --font-display:'Bebas Neue','Oswald','Impact',sans-serif; --font-body:'Instrument Sans','Helvetica Neue',sans-serif; --font-mono:'DM Mono',Menlo,monospace;
+  --r:10px; --tab-h:64px;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#0d0c15; --surface:#15131f; --raise:#1d1a29; --ink:#f1eadb; --muted:#a49d8c; --rule:#2a2637;
+  --brass:#d6ab4c; --brass-soft:#3b3015; --brass-ink:#f3d58c; --ok:#8fd2a1; --ok-soft:#1a3324; --skip:#e59a88; --skip-soft:#3a1f1a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d0c15; --surface:#15131f; --raise:#1d1a29; --ink:#f1eadb; --muted:#a49d8c; --rule:#2a2637;
+  --brass:#d6ab4c; --brass-soft:#3b3015; --brass-ink:#f3d58c; --ok:#8fd2a1; --ok-soft:#1a3324; --skip:#e59a88; --skip-soft:#3a1f1a;
+}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15.5px;line-height:1.45;padding-inline:16px;padding-block:0 calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:var(--brass-ink)}
+.wrap{max-width:720px;margin:0 auto}
+h1,h2,h3{margin:0;font-weight:normal}
+.top{position:sticky;top:0;z-index:6;background:var(--bg);padding-block:10px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--rule)}
+.top h1{font-family:var(--font-display);font-size:1.9rem;letter-spacing:.03em;line-height:1}
+.top h1 em{font-style:normal;color:var(--brass)}
+.top .clock{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-align:right;line-height:1.3}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-block:10px 4px;margin-inline:-16px;padding-inline:16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;font-family:var(--font-mono);font-size:.74rem;letter-spacing:.06em;padding:6px 11px;border:1px solid var(--rule);border-radius:999px;color:var(--muted);background:var(--surface);white-space:nowrap}
+.chip.on{background:var(--brass-soft);color:var(--brass-ink);border-color:var(--brass-soft)}
+.chip b{font-family:var(--font-display);font-size:1rem;letter-spacing:.04em;margin-right:4px;color:inherit;font-weight:normal}
+section.view{display:none;padding-top:6px} section.view.on{display:block}
+.eyebrow{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin:0 0 6px}
+.h2{font-family:var(--font-display);font-size:2rem;letter-spacing:.02em;line-height:1;margin:14px 0 2px}
+.sub{color:var(--muted);margin:0 0 12px;font-style:italic}
+
+/* hero (up next) */
+.hero{background:var(--raise);border:1px solid var(--rule);border-left:4px solid var(--brass);border-radius:var(--r);padding:14px 14px 12px;margin-top:10px}
+.hero .when{font-family:var(--font-mono);font-size:.74rem;color:var(--muted);letter-spacing:.06em;display:flex;justify-content:space-between;gap:8px}
+.hero h2{font-family:var(--font-display);font-size:1.9rem;letter-spacing:.02em;line-height:1.02;margin:4px 0 4px}
+.hero .where{font-family:var(--font-mono);font-size:.74rem;color:var(--muted);margin:0 0 6px}
+.hero p{margin:0;font-size:.95rem}
+.dist{font-family:var(--font-mono);font-size:.74rem;color:var(--brass-ink);margin-top:6px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.74rem;letter-spacing:.06em;padding:9px 12px;border-radius:8px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);text-decoration:none;min-height:40px}
+.btn.primary{background:var(--brass);color:#14110a;border-color:var(--brass)}
+.btn.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.btn.skip{background:var(--skip-soft);color:var(--skip);border-color:transparent}
+.btn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+/* stop list */
+.stops{list-style:none;margin:8px 0 0;padding:0}
+.stop{display:grid;grid-template-columns:56px 1fr auto;gap:0 10px;padding:11px 0;border-bottom:1px solid var(--rule);align-items:start}
+.stop .t{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);padding-top:3px;font-variant-numeric:tabular-nums}
+.stop .t small{display:block;font-size:.6rem;letter-spacing:.1em;opacity:.8}
+.stop h3{font-size:1.02rem;font-weight:600;line-height:1.25}
+.stop .where{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);margin-top:2px}
+.stop .more{display:none;margin-top:6px;font-size:.92rem}
+.stop.open .more{display:block}
+.stop .tick{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--rule);display:grid;place-items:center;font-size:1rem;color:var(--muted)}
+.stop.done h3{text-decoration:line-through;color:var(--muted)}
+.stop.done .tick{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.stop.skipped h3{text-decoration:line-through;color:var(--muted)}
+.stop.skipped .tick{background:var(--skip-soft);color:var(--skip);border-color:transparent}
+.stop.next h3::before{content:"▸ ";color:var(--brass)}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:.15em;white-space:nowrap}
+.tag.booked{background:var(--ok-soft);color:var(--ok)} .tag.book{background:var(--brass-soft);color:var(--brass-ink)} .tag.walk{border:1px solid var(--rule);color:var(--muted)} .tag.custom{background:var(--brass);color:#14110a}
+.dress{font-family:var(--font-mono);font-size:.68rem;color:var(--brass);display:block;margin-top:4px}
+
+/* explore */
+.cats{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:12px;margin-top:8px}
+.card h3{font-size:1.02rem;font-weight:600}
+.card .why{font-size:.92rem;margin:3px 0 0}
+.card .meta{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);margin-top:4px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ask{background:var(--raise);border:1px solid var(--brass-soft);border-radius:var(--r);padding:12px;margin-top:12px}
+.ask textarea{width:100%;min-height:64px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:8px;font:inherit;font-size:.95rem;resize:vertical}
+.ask .out{margin-top:10px;font-size:.95rem;white-space:pre-wrap}
+.ask .out .card{margin-top:8px}
+.note{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);margin-top:8px;line-height:1.5}
+
+/* book */
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+td{padding:9px 6px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.when{font-family:var(--font-mono);font-size:.72rem;white-space:nowrap;color:var(--brass-ink)}
+td.chk{width:36px}
+tr.done td{color:var(--muted);text-decoration:line-through}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin-top:10px}
+.facts div{background:var(--surface);padding:10px 12px}
+.facts small{display:block;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.facts b{font-weight:600}
+.facts span{display:block;font-size:.85rem;color:var(--muted)}
+
+/* tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;height:calc(var(--tab-h) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--surface);border-top:1px solid var(--rule);display:flex;z-index:7}
+.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tabs button .ico{font-family:var(--font-display);font-size:1.35rem;letter-spacing:.02em;line-height:1}
+.tabs button.on{color:var(--brass-ink)} .tabs button.on .ico{color:var(--brass)}
+.toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);transform:translateX(-50%);background:var(--ink);color:var(--bg);font-family:var(--font-mono);font-size:.74rem;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:8}
+.toast.show{opacity:1}
+.sync{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.1em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <h1>NOLA <em>Pocket</em></h1>
+  <div class="clock" id="clock"></div>
+</header>
+
+<section class="view on" id="v-now"></section>
+<section class="view" id="v-plan"></section>
+<section class="view" id="v-explore"></section>
+<section class="view" id="v-book"></section>
+<section class="view" id="v-info"></section>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <button data-v="now" class="on"><span class="ico">NOW</span>up next</button>
+  <button data-v="plan"><span class="ico">PLAN</span>day by day</button>
+  <button data-v="explore"><span class="ico">GO</span>find other</button>
+  <button data-v="book"><span class="ico">BOOK</span>queue</button>
+  <button data-v="info"><span class="ico">INFO</span>refs</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+// ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
+const TRIP = {
+  title: "New Orleans", dates: "Thu Nov 5 – Tue Nov 10, 2026", tz: "America/Chicago",
+  facts: [
+    ["Nights 1–3", "The Old No. 77", "535 Tchoupitoulas · ref 2555774687 · free cancel to Nov 4, 4pm"],
+    ["Nights 4–5", "Virgin Hotels", "550 Baronne · The Edit: breakfast for two, late checkout"],
+    ["Flights", "Southwest nonstop", "LAS 12:10p out Thu · MSY afternoon back Tue · A-List: check 48h out"],
+    ["Airport", "Taxi $36 flat", "Baggage Claim Level 1, Door 7 · Uber $22–36 off-peak"],
+    ["Card", "Chase Sapphire Reserve", "Pay Virgin charges in cash (no points) so both $250 credits fire"],
+    ["Rules", "No seafood · no phone calls", "Every reservation on this list books online"],
+  ],
+};
+
+// status: booked | book | walk
+const DAYS = [
+  { id:"thu", label:"Thursday", date:"2026-11-05", sub:"Land, settle in, one set of jazz.", stay:"old77", stops:[
+    { t:"12:10", tz:"PT", p:null, title:"LAS → MSY, Southwest", status:"booked", cat:"transit", where:"Nonstop · ~3h 25m · two Choice fares, one reservation", note:"Sleep in — the convention ended yesterday. Check the app 48 hours before: A-List gets Extra Legroom free if a row is open." },
+    { t:"17:35", p:"msy", title:"Land MSY", cat:"transit", where:"Taxi $36 flat (Level 1, Door 7) · 20–30 min · Uber $22–36", note:"Dark by 5 — tonight is a settling-in evening." },
+    { t:"18:15", p:"old77", title:"Check in, The Old No. 77", status:"booked", cat:"hotel", key:true, where:"ref 2555774687 · $100 deposit + $62.70 fees at the desk", note:"An 1854 warehouse — exposed brick, local art, cast-iron columns." },
+    { t:"19:00", p:"cochon", title:"Dinner at Cochon", status:"book", cat:"food", key:true, where:"Two blocks up the street · 3-min walk", note:"Cajun pork: cochon de lait, boudin, smoked ham hock, rabbit and dumplings. Best non-seafood table in the city.", link:"https://cochonrestaurant.com" },
+    { t:"20:45", p:"preshall", title:"Preservation Hall", status:"book", cat:"music", key:true, where:"10-min walk · 35–40 min set · tickets post ~mid-Oct", note:"Traditional jazz in a room standing since 1750. Malinda's night. Non-refundable — grab the 8:45 when November opens.", link:"https://www.preservationhall.com" },
+    { t:"21:45", p:"lafittes", title:"Lafitte's Blacksmith Shop", status:"walk", cat:"bar", where:"8-min walk · cash bar · piano in the back room", note:"1770s brick cottage lit by candles — the oldest bar building in the country. One drink, then the 15-min walk home down Chartres." },
+  ]},
+  { id:"fri", label:"Friday", date:"2026-11-06", sub:"One old house, one odd museum, then the lunch people plan trips around.", stay:"old77", stops:[
+    { t:"10:00", p:"hermann", title:"Hermann-Grima House", status:"book", cat:"see", key:true, where:"Guided, on the hour · ~45 min · $20", note:"The one house tour: an 1831 mansion, working open-hearth kitchen, stable, courtyard ironwork. Closed Tuesdays.", link:"https://hgghh.org" },
+    { t:"11:30", p:"pharmacy", title:"New Orleans Pharmacy Museum", status:"walk", cat:"see", where:"$10 · Tue–Sat 11–4 · 6-min walk · 30–40 min", note:"America's first licensed pharmacy, 1823: leeches, voodoo potions, a carved soda fountain. On the way to Galatoire's." },
+    { t:"13:30", p:"galatoires", title:"Galatoire's Friday lunch", status:"book", cat:"food", key:true, where:"Resy ~Oct 7 · 1905 · closed Mondays", note:"Souffléed potatoes, filet béarnaise, Chicken Clemenceau. Jacket optional at lunch, required after 5.", dress:"Jacket optional at lunch", link:"https://resy.com" },
+    { t:"16:30", p:"napoleon", title:"Napoleon House", status:"walk", cat:"bar", where:"6-min walk · 1797 building · the Pimm's Cup", note:"Peeling walls, classical music, the balcony meant for Napoleon. Let a three-hour lunch settle." },
+    { t:"19:30", p:"dooky", title:"Dooky Chase's", status:"book", cat:"food", key:true, where:"OpenTable ~Oct 7 · dinner Fri & Sat only · $12 Uber", note:"Leah Chase's Creole institution since 1941 — fried chicken, gumbo, red beans, the art on the walls.", link:"https://www.opentable.com" },
+    { t:"21:30", p:"chickie", title:"Eric Lindell at Chickie Wah Wah", status:"book", cat:"music", key:true, where:"6-min Uber from Dooky Chase · small room · swamp blues", note:"Noel's night: Louisiana blue-eyed soul, a guitar player's guitar player. Malinda's alternative: Kermit Ruffins at Blue Nile, 10pm.", link:"https://www.chickiewahwah.com", alt:"bluenile" },
+    { t:"23:30", p:"washsq", title:"Bayou Bacchanal Pre Fete (optional)", status:"walk", cat:"event", where:"Wear white · Marigny", note:"Only if you're still standing." },
+  ]},
+  { id:"sat", label:"Saturday", date:"2026-11-07", sub:"The celebration day. Something on fire at both ends of it.", stay:"old77", stops:[
+    { t:"10:15", p:"brennans", title:"Brennan's", status:"booked", cat:"food", key:true, where:"The pink building · out by ~noon", note:"Eggs Hussarde, turtle soup (veal), Bananas Foster flambéed tableside — invented here in 1951.", dress:"Jackets preferred" },
+    { t:"13:00", p:"basin", title:"St. Louis Cemetery No. 1, guided", status:"book", cat:"see", key:true, where:"Check in at Basin St. Station · $29 pp · ~55 min · every 15 min to 4pm", note:"1789, the oldest in the city. Whitewashed for All Saints' five days ago. Marie Laveau's tomb is the stop everyone waits for.", link:"https://cemeterytourneworleans.com" },
+    { t:"14:15", p:"voodooauth", title:"Voodoo Authentica", status:"walk", cat:"see", key:true, where:"12-min walk · run by initiated practitioners since 1996", note:"Gris-gris made to order at the counter — say what it's for. Readings in the back. The Historic Voodoo Museum is a block up ($10) if you want more.", alt:"voodoomuseum" },
+    { t:"15:15", p:"washsq", title:"Bayou Bacchanal", status:"walk", cat:"event", where:"Festival ~11am–9pm · route posts ~1 wk out · 20-min walk from Dumaine", note:"Caribbean masquerade parade into a festival — costumes, soca, jerk everything. Check friendsofculture.org late October. Fallback: Beignet Fest, City Park.", link:"https://friendsofculture.org", alt:"beignetfest" },
+    { t:"19:30", p:"antoines", title:"Antoine's — the birthday dinner", status:"book", cat:"food", key:true, where:"OpenTable ~Oct 8 · since 1840 · fourteen dining rooms", note:"Chateaubriand, Chicken Rochambeau, pommes soufflées. Ask to see the Rex Room and the 1840 Room.", dress:"Jackets and collared shirts", link:"https://www.opentable.com" },
+    { t:"21:45", p:"patobs", title:"Pat O'Brien's Piano Lounge", status:"walk", cat:"music", key:true, where:"3-min walk · dueling pianos Sat 1pm–2am · walk in", note:"Two pianos and a room that shouts every request back. Hurricanes were invented here. Jazz alternative: Snug Harbor, 9:30 seating.", alt:"snug" },
+  ]},
+  { id:"sun", label:"Sunday", date:"2026-11-08", sub:"Hotel move, jazz brunch, mansions, a festival, a new rooftop.", stay:"virgin", stops:[
+    { t:"09:00", p:"virgin", title:"Check out the 77, drop bags at Virgin", status:"booked", cat:"hotel", where:"5 min on foot · check-in 4pm · rooftop pool, Commons Club", note:"Then the St. Charles streetcar Uptown — $8 for a 3-day Jazzy Pass." },
+    { t:"10:00", p:"commanders", title:"Commander's Palace jazz brunch", status:"book", cat:"food", key:true, where:"Tock — no published window; check weekly from early Oct", note:"A live trio moves table to table. Business attire, jackets preferred, jeans discouraged.", dress:"Business attire", link:"https://www.exploretock.com/commanderspalace" },
+    { t:"12:00", p:"lafayette1", title:"Lafayette Cemetery No. 1, over the wall", status:"walk", cat:"see", where:"Directly across Washington Ave · closed", note:"Two minutes at the gate. Lafayette No. 2 (Washington & Loyola) is open if you want to walk one." },
+    { t:"13:00", p:"commanders", title:"Garden District architecture walk", status:"book", cat:"see", key:true, where:"NOLA Tours · $40 pp · 2 hrs · max 14 · meets a few blocks from Commander's", note:"Greek Revival and Italianate mansions under the live oaks. The one architecture walk.", link:"https://nolatours.com" },
+    { t:"15:30", p:"poboy", title:"Oak Street Po-Boy Festival", status:"book", cat:"event", key:true, where:"Streetcar up St. Charles · 10–6 · $10 wristband ~Nov 1", note:"Eight blocks of Oak Street. Roast beef with debris. Sudan SA&PC second line runs 12–4 nearby — check WWOZ. Saints kick off at noon: traffic, not a plan.", link:"https://poboyfest.com" },
+    { t:"17:45", p:"sazerac", title:"The Sazerac Bar, Roosevelt Hotel", status:"walk", cat:"bar", key:true, where:"5-min walk from Virgin · check in and drop bags on the way", note:"Art deco, walnut, the Ninas murals. The Sazerac first, then the Ramos Gin Fizz — the twelve-minute shake is the show." },
+    { t:"19:15", p:"williemae", title:"Willie Mae's Scotch House", status:"walk", cat:"food", key:true, where:"Four blocks from Virgin · closed Tuesdays", note:"The fried chicken. This is the CBD location — the Tremé original is still closed." },
+    { t:"21:00", p:"howlin", title:"Hot 8 Brass Band at the Howlin' Wolf", status:"book", cat:"music", key:true, where:"10-min walk from Virgin · tickets online", note:"Brass band, the hip-hop-and-funk kind. For both of you. Louder: Hawthorne Heights at House of Blues. Jazz: Blue Nile Sypher Sundays.", link:"https://www.thehowlinwolf.com", alt:"hob" },
+  ]},
+  { id:"mon", label:"Monday", date:"2026-11-09", sub:"The best museum in the country, a free distillery, a bar that spins, then the blues and the funk.", stay:"virgin", stops:[
+    { t:"09:00", p:"ww2", title:"The National WWII Museum", status:"book", cat:"see", key:true, where:"10-min walk · daily 9–5 · $37 + $9 Beyond All Boundaries", note:"The No. 1-rated museum in the United States, four blocks away. Film first, then Road to Berlin, Road to Tokyo, the hanging aircraft. Three hours.", link:"https://www.nationalww2museum.org" },
+    { t:"12:30", p:"mothers", title:"Mother's", status:"walk", cat:"food", key:true, where:"8-min walk · 7am–10pm · no reservations", note:"The Ferdi Special — baked ham, roast beef and debris in gravy. The most famous cafeteria line in the city." },
+    { t:"14:00", p:"sazhouse", title:"Sazerac House", status:"book", cat:"see", key:true, where:"Free — reserve online · 5-min walk · last tour 4:45", note:"Three floors and a working micro-distillery on the cocktail New Orleans invented, with tastings. About an hour.", link:"https://www.sazerachouse.com" },
+    { t:"15:30", p:"carousel", title:"Carousel Bar, then the Algiers ferry", status:"walk", cat:"bar", where:"Hotel Monteleone · then Canal St ferry, 10-min walk · $2 · every 30 min", note:"One drink at the bar that rotates every fifteen minutes, then the five-minute ferry across for the skyline at sunset.", alt:"ferry" },
+    { t:"17:30", p:"bacchanal", title:"Bacchanal Wine", status:"walk", cat:"food", key:true, where:"Bywater · backyard music 5–10 · $12 Uber · no reservations, ever", note:"Pick a bottle inside, cheese and charcuterie from the counter, sit in the yard. Burger alternative: Port of Call.", alt:"portofcall" },
+    { t:"20:30", p:"bjs", title:"Red Beans & Blues at BJ's Lounge", status:"walk", cat:"music", key:true, where:"10-min walk from Bacchanal · Mondays 9pm · free · cash bar", note:"Washboard Chaz and friends in the best dive in the Bywater. Little Freddie King plays here when booked — check WWOZ the week of." },
+    { t:"22:30", p:"mapleleaf", title:"George Porter Jr. Trio at the Maple Leaf", status:"book", cat:"music", key:true, where:"Late show 10pm · 21+ · $25 Uber from BJ's, 25 min", note:"The bassist of The Meters in his Monday residency. Noel's night to close on. Malinda's alternative: Corey Henry at d.b.a., 9:30.", link:"https://www.mapleleafbar.com", alt:"dba" },
+    { t:"00:30", p:"snakejake", title:"Snake and Jake's Christmas Club Lounge", status:"walk", cat:"bar", where:"3-min walk · cash · until dawn", note:"A shack lit by Christmas lights. One drink, then an Uber to Baronne. Late checkout makes this possible." },
+  ]},
+  { id:"tue", label:"Tuesday", date:"2026-11-10", sub:"Beignets and out.", stay:"virgin", stops:[
+    { t:"09:00", p:"commonsclub", title:"Breakfast for two, Commons Club", status:"booked", cat:"food", where:"Included — The Edit perk", note:"Sleep in. Late checkout too." },
+    { t:"10:30", p:"cdm", title:"Café du Monde, last walk on Royal", status:"walk", cat:"food", where:"24 hours · beignets and café au lait", note:"Hermann-Grima, Gallier, Pitot House and Willie Mae's are all closed Tuesdays." },
+    { t:"12:30", p:"virgin", title:"Check out, taxi to MSY", cat:"transit", where:"$36 flat · 20–30 min", note:"Westbound runs ~4 hours with headwinds. You get two hours back landing in Las Vegas." },
+    { t:"14:30", p:"msy", title:"MSY → LAS, Southwest", status:"booked", cat:"transit", where:"Afternoon departure · check 48h out for Extra Legroom", note:"Home two days before family lands." },
+  ]},
+];
+
+// ---- Backup catalog: what to reach for when the plan breaks.
+const EXTRAS = [
+  { p:"metairie", cat:"see", title:"Metairie Cemetery", why:"150 acres on an old racetrack, Egyptian Revival and Greek temples. Free, self-guided, sunrise to sunset. ~20 min out." },
+  { p:"gallier", cat:"see", title:"Gallier House", why:"The architect's own 1857 townhouse. Guided at :30 past, $34 combo with Hermann-Grima. Closed Tue." },
+  { p:"mgworld", cat:"see", title:"Mardi Gras World", why:"The float warehouse — see next year's floats being built. ~$25, 1-hr tour, 15-min walk from the 77." },
+  { p:"backstreet", cat:"see", title:"Backstreet Cultural Museum", why:"Mardi Gras Indian suits, second-line and jazz funeral history, in Tremé. Small, essential." },
+  { p:"besthoff", cat:"see", title:"Besthoff Sculpture Garden", why:"Free, 12 acres of sculpture under the oaks at City Park, next to NOMA." },
+  { p:"longuevue", cat:"see", title:"Longue Vue House & Gardens", why:"$35, 75-min tours on the half hour. Pairs with Metairie Cemetery." },
+  { p:"voodoomuseum", cat:"see", title:"New Orleans Historic Voodoo Museum", why:"$10, two rooms of altars and relics since 1972. Also runs a 9am voodoo walking tour ($36, 2 hrs)." },
+  { p:"cabildo", cat:"see", title:"The Cabildo", why:"Louisiana Purchase was signed here. State museum, $10, on Jackson Square. Presbytère next door has the Mardi Gras and Katrina exhibits." },
+  { p:"frenchmenart", cat:"see", title:"Frenchmen Art Bazaar", why:"Night art market on Frenchmen, Thu–Sun evenings. Between sets." },
+  { p:"algiers", cat:"see", title:"Algiers Point", why:"Take the $2 ferry, walk the levee, come back at sunset." },
+  { p:"superdome", cat:"event", title:"Saints vs. Browns", why:"Sunday Nov 8, noon kickoff, Superdome. Trade Po-Boy Fest for football if you must. Resale tickets only." },
+  { p:"beignetfest", cat:"event", title:"Beignet Fest", why:"Sat Nov 7, 10–6, City Park, $20 advance. The Bayou Bacchanal fallback." },
+  { p:"tipitinas", cat:"music", title:"Tipitina's", why:"The most famous room in the city. Fri Nov 6: Bowling For Soup 7:30. Sat Nov 7: Dinosaur Jr. Uptown, $15 Uber." },
+  { p:"fillmore", cat:"music", title:"The Fillmore", why:"Thu: Thundercat. Fri–Sun: Pretty Lights (electronic), 8pm. Inside Harrah's, walkable from both hotels." },
+  { p:"hob", cat:"music", title:"House of Blues", why:"Fri: Jon B (R&B). Sun: Hawthorne Heights (emo). Decatur St." },
+  { p:"dba", cat:"music", title:"d.b.a.", why:"Frenchmen. Soul Rebels Fri 10pm, Corey Henry & the Trémé Funktet Mon 9:30. Funk, not jazz." },
+  { p:"bluenile", cat:"music", title:"Blue Nile", why:"Frenchmen. Kermit Ruffins & the BBQ Swingers Fri 10pm (jazz, for Malinda). Sypher Sundays 7pm." },
+  { p:"snug", cat:"music", title:"Snug Harbor", why:"The real ticketed jazz room, seated, 8 and 10 sets. Malinda's fallback any night." },
+  { p:"applebarrel", cat:"music", title:"Apple Barrel", why:"Closet-sized Frenchmen room with a blues act most nights. Walk in." },
+  { p:"bamboulas", cat:"music", title:"Bamboula's", why:"Frenchmen, louder and rock-leaning, walk in." },
+  { p:"bbkings", cat:"music", title:"B.B. King's Blues Club", why:"Decatur St, house band nightly. Dependable if touristy." },
+  { p:"rocknbowl", cat:"music", title:"Rock 'n' Bowl", why:"Zydeco Thursdays, party bands Fri–Sat, and it's a bowling alley. Mid-City." },
+  { p:"absinthe", cat:"bar", title:"Old Absinthe House", why:"1807, the marble absinthe fountains still drip. Bourbon at Bienville." },
+  { p:"tujagues", cat:"bar", title:"Tujague's", why:"Second-oldest restaurant in the city; the Grasshopper was invented at the stand-up bar." },
+  { p:"french75", cat:"bar", title:"Arnaud's French 75 Bar", why:"Tuxedoed bartenders, tiny, the best pre-dinner drink near Galatoire's." },
+  { p:"erinrose", cat:"bar", title:"Erin Rose", why:"Dive with a frozen Irish coffee and Killer PoBoys in the back — a real lunch." },
+  { p:"columns", cat:"bar", title:"The Columns", why:"Porch on St. Charles, streetcars going by. On the way to the Garden District." },
+  { p:"chartroom", cat:"bar", title:"Chart Room", why:"Cheapest good bar in the Quarter, no music, no tourists." },
+  { p:"cure", cat:"bar", title:"Cure", why:"The bar that started the city's cocktail revival. Freret St, rideshare." },
+  { p:"parkway", cat:"food", title:"Parkway Bakery & Tavern", why:"The roast beef po-boy. Mid-City, walk-in, closed Tuesdays." },
+  { p:"central", cat:"food", title:"Central Grocery", why:"The muffuletta, since 1906. Decatur St, take it to the river." },
+  { p:"portofcall", cat:"food", title:"Port of Call", why:"Burger and a loaded baked potato, cash, no reservations, on Esplanade." },
+  { p:"turkeywolf", cat:"food", title:"Turkey and the Wolf", why:"The fried bologna sandwich. Lunch only, Lower Garden District." },
+  { p:"toups", cat:"food", title:"Toups' Meatery", why:"Cajun meat cooking, boudin balls, cracklins. Mid-City." },
+  { p:"compere", cat:"food", title:"Compère Lapin", why:"Inside the Old No. 77. Curried goat, the non-seafood order. Book on Resy." },
+  { p:"cafebeignet", cat:"food", title:"Café Beignet", why:"Royal St. The other beignet, with a courtyard, shorter line than Café du Monde." },
+  { p:"cochonbutcher", cat:"food", title:"Cochon Butcher", why:"Sandwich counter next to Cochon. Muffuletta, Le Pig Mac. Walk in." },
+  { p:"jacquesimos", cat:"food", title:"Jacques-Imo's", why:"Fried chicken and alligator cheesecake next to the Maple Leaf. Wed–Sat only, walk-in for two." },
+  { p:"williemae", cat:"food", title:"Willie Mae's Scotch House", why:"The fried chicken, four blocks from Virgin. Closed Tuesdays." },
+];
+
+// ---- Booking queue
+const QUEUE = [
+  ["~Oct 7","Hermann-Grima House, Fri 10:00","hgghh.org","$20 pp. Reservations encouraged."],
+  ["~Oct 7","Galatoire's Friday lunch, 1:30","Resy","The one table worth an alarm."],
+  ["~Oct 7","St. Louis No. 1 tour, Sat 1:00","cemeterytourneworleans.com","$29 pp, capped at 20."],
+  ["~Oct 7","Dooky Chase's, Fri 7:30","OpenTable","Dinner Fri–Sat only."],
+  ["~Oct 8","Antoine's, Sat 7:30","OpenTable","Request the Rex Room or 1840 Room."],
+  ["~Oct 9","Garden District walk, Sun 1:00","nolatours.com","$40 pp, max 14."],
+  ["Weekly from Oct","Commander's jazz brunch, Sun 10:00","Tock","No published window. Check Mondays."],
+  ["Mid-Oct","Preservation Hall, Thu 8:45","preservationhall.com","Posts 3–4 weeks out. Non-refundable."],
+  ["~Oct 15","Eric Lindell (Fri) · Hot 8 (Sun) · George Porter Jr. (Mon)","chickiewahwah.com · thehowlinwolf.com · mapleleafbar.com","Small rooms, cheap tickets."],
+  ["~Oct 20","Confirm Frenchmen lineups","wwoz.org Livewire","Fri, Sun, Mon."],
+  ["Late Oct","Bayou Bacchanal route","friendsofculture.org","Washington Square Park."],
+  ["~Nov 1","Po-Boy Fest wristbands","poboyfest.com","$10 advance vs $12 day-of."],
+  ["~Nov 1","WWII Museum tickets (Mon 9) + Sazerac House (Mon 2)","nationalww2museum.org · sazerachouse.com","$46 pp with the film; Sazerac free but reservation-only."],
+  ["Week of Nov 2","Sudan second line route, Sun 12–4","wwoz.org/programs/inthestreet","Route sheets post the week of."],
+  ["Nov 3 & Nov 8","Southwest seat check","Southwest app","48h before each flight."],
+  ["Nov 4","Pack","—","Layers, rain shell, walking shoes, a jacket for Brennan's, Antoine's, Commander's."],
+];
+
+const PLACES={"msy": {"name": "Louis Armstrong New Orleans International Airport (MSY)", "addr": "1 Terminal Dr, Kenner, LA 70062", "cat": "transit", "ll": [29.9934, -90.258]}, "old77": {"name": "The Old No. 77 Hotel & Chandlery", "addr": "535 Tchoupitoulas St, New Orleans, LA 70130", "cat": "hotel", "ll": [29.94792, -90.06748]}, "virgin": {"name": "Virgin Hotels New Orleans", "addr": "550 Baronne St, New Orleans, LA 70113", "cat": "hotel", "ll": [29.94942, -90.07318]}, "cochon": {"name": "Cochon", "addr": "930 Tchoupitoulas St, New Orleans, LA 70130", "cat": "food", "ll": [29.9422, -90.067]}, "preshall": {"name": "Preservation Hall", "addr": "726 St Peter St, New Orleans, LA 70116", "cat": "music", "ll": [29.9583, -90.06543]}, "lafittes": {"name": "Lafitte's Blacksmith Shop", "addr": "941 Bourbon St, New Orleans, LA 70116", "cat": "bar", "ll": [29.96105, -90.06358]}, "hermann": {"name": "Hermann-Grima House", "addr": "820 St Louis St, New Orleans, LA 70112", "cat": "see", "ll": [29.95722, -90.06762]}, "pharmacy": {"name": "New Orleans Pharmacy Museum", "addr": "514 Chartres St, New Orleans, LA 70130", "cat": "see", "ll": [29.95605, -90.0649]}, "galatoires": {"name": "Galatoire's", "addr": "209 Bourbon St, New Orleans, LA 70130", "cat": "food", "ll": [29.95497, -90.06902]}, "napoleon": {"name": "Napoleon House", "addr": "500 Chartres St, New Orleans, LA 70130", "cat": "bar", "ll": [29.95586, -90.06507]}, "dooky": {"name": "Dooky Chase's Restaurant", "addr": "2301 Orleans Ave, New Orleans, LA 70119", "cat": "food", "ll": [29.96821, -90.07849]}, "chickie": {"name": "Chickie Wah Wah", "addr": "2828 Canal St, New Orleans, LA 70119", "cat": "music", "ll": [29.96675, -90.08959]}, "bluenile": {"name": "Blue Nile", "addr": "532 Frenchmen St, New Orleans, LA 70116", "cat": "music", "ll": [29.96314, -90.05786]}, "brennans": {"name": "Brennan's", "addr": "417 Royal St, New Orleans, LA 70130", "cat": "food", "ll": [29.95618, -90.06664]}, "basin": {"name": "Basin St. Station (St. Louis Cemetery No. 1 tours)", "addr": "501 Basin St, New Orleans, LA 70112", "cat": "see", "ll": [29.95973, -90.07075]}, "voodooauth": {"name": "Voodoo Authentica", "addr": "612 Dumaine St, New Orleans, LA 70116", "cat": "see", "ll": [29.95919, -90.06277]}, "voodoomuseum": {"name": "New Orleans Historic Voodoo Museum", "addr": "724 Dumaine St, New Orleans, LA 70116", "cat": "see", "ll": [29.95982, -90.06379]}, "washsq": {"name": "Washington Square Park (Bayou Bacchanal)", "addr": "700 Elysian Fields Ave, New Orleans, LA 70117", "cat": "event", "ll": [29.96471, -90.05676]}, "antoines": {"name": "Antoine's Restaurant", "addr": "713 St Louis St, New Orleans, LA 70130", "cat": "food", "ll": [29.95672, -90.06648]}, "patobs": {"name": "Pat O'Brien's Piano Lounge", "addr": "718 St Peter St, New Orleans, LA 70116", "cat": "music", "ll": [29.95809, -90.06549]}, "snug": {"name": "Snug Harbor Jazz Bistro", "addr": "626 Frenchmen St, New Orleans, LA 70116", "cat": "music", "ll": [29.96413, -90.05792]}, "commanders": {"name": "Commander's Palace", "addr": "1403 Washington Ave, New Orleans, LA 70130", "cat": "food", "ll": [29.92883, -90.08421]}, "lafayette1": {"name": "Lafayette Cemetery No. 1", "addr": "1416 Washington Ave, New Orleans, LA 70130", "cat": "see", "ll": [29.92883, -90.08452]}, "poboy": {"name": "Oak Street Po-Boy Festival", "addr": "8200 Oak St, New Orleans, LA 70118", "cat": "event", "ll": [29.94808, -90.13086]}, "sazerac": {"name": "The Sazerac Bar, Roosevelt Hotel", "addr": "130 Roosevelt Way, New Orleans, LA 70112", "cat": "bar", "ll": [29.95449, -90.07222]}, "williemae": {"name": "Willie Mae's Scotch House", "addr": "898 Baronne St, New Orleans, LA 70113", "cat": "food", "ll": [29.94569, -90.07429]}, "howlin": {"name": "The Howlin' Wolf", "addr": "907 S Peters St, New Orleans, LA 70130", "cat": "music", "ll": [29.9427, -90.06592]}, "ww2": {"name": "The National WWII Museum", "addr": "945 Magazine St, New Orleans, LA 70130", "cat": "see", "ll": [29.94214, -90.07077]}, "mothers": {"name": "Mother's Restaurant", "addr": "401 Poydras St, New Orleans, LA 70130", "cat": "food", "ll": [29.94903, -90.06718]}, "sazhouse": {"name": "Sazerac House", "addr": "101 Magazine St, New Orleans, LA 70130", "cat": "see", "ll": [29.95169, -90.06756]}, "carousel": {"name": "Carousel Bar, Hotel Monteleone", "addr": "214 Royal St, New Orleans, LA 70130", "cat": "bar", "ll": [29.95419, -90.06794]}, "ferry": {"name": "Canal Street Ferry Terminal", "addr": "1 Canal St, New Orleans, LA 70130", "cat": "see", "ll": [29.95088, -90.06321]}, "bacchanal": {"name": "Bacchanal Wine", "addr": "600 Poland Ave, New Orleans, LA 70117", "cat": "food", "ll": [29.95978, -90.03324]}, "bjs": {"name": "BJ's Lounge", "addr": "4301 Burgundy St, New Orleans, LA 70117", "cat": "music", "ll": [29.96282, -90.03309]}, "mapleleaf": {"name": "Maple Leaf Bar", "addr": "8316 Oak St, New Orleans, LA 70118", "cat": "music", "ll": [29.94899, -90.13199]}, "snakejake": {"name": "Snake and Jake's Christmas Club Lounge", "addr": "7612 Oak St, New Orleans, LA 70118", "cat": "bar", "ll": [29.94413, -90.12605]}, "cdm": {"name": "Café du Monde", "addr": "800 Decatur St, New Orleans, LA 70116", "cat": "food", "ll": [29.95756, -90.06185]}, "metairie": {"name": "Metairie Cemetery", "addr": "5100 Pontchartrain Blvd, New Orleans, LA 70124", "cat": "see", "ll": [30.02156, -90.1144]}, "gallier": {"name": "Gallier House", "addr": "1132 Royal St, New Orleans, LA 70116", "cat": "see", "ll": [29.96146, -90.0615]}, "mgworld": {"name": "Mardi Gras World", "addr": "1380 Port of New Orleans Pl, New Orleans, LA 70130", "cat": "see", "ll": [29.93466, -90.06158]}, "backstreet": {"name": "Backstreet Cultural Museum", "addr": "1531 St Philip St, New Orleans, LA 70116", "cat": "see", "ll": [29.96458, -90.06621]}, "besthoff": {"name": "Sydney and Walda Besthoff Sculpture Garden", "addr": "1 Collins C Diboll Cir, New Orleans, LA 70124", "cat": "see", "ll": [29.9857, -90.0935]}, "superdome": {"name": "Caesars Superdome", "addr": "1500 Sugar Bowl Dr, New Orleans, LA 70112", "cat": "event", "ll": [29.95105, -90.08231]}, "tipitinas": {"name": "Tipitina's", "addr": "501 Napoleon Ave, New Orleans, LA 70115", "cat": "music", "ll": [29.91742, -90.10082]}, "fillmore": {"name": "The Fillmore New Orleans", "addr": "6 Canal St, New Orleans, LA 70130", "cat": "music", "ll": [29.95031, -90.06428]}, "hob": {"name": "House of Blues New Orleans", "addr": "225 Decatur St, New Orleans, LA 70130", "cat": "music", "ll": [29.95326, -90.06613]}, "dba": {"name": "d.b.a.", "addr": "618 Frenchmen St, New Orleans, LA 70116", "cat": "music", "ll": [29.96394, -90.05804]}, "applebarrel": {"name": "Apple Barrel", "addr": "609 Frenchmen St, New Orleans, LA 70116", "cat": "music", "ll": [29.96382, -90.05766]}, "bamboulas": {"name": "Bamboula's", "addr": "516 Frenchmen St, New Orleans, LA 70116", "cat": "music", "ll": [29.9628, -90.05777]}, "bbkings": {"name": "B.B. King's Blues Club", "addr": "1104 Decatur St, New Orleans, LA 70116", "cat": "music", "ll": [29.96001, -90.05964]}, "rocknbowl": {"name": "Rock 'n' Bowl", "addr": "3016 S Carrollton Ave, New Orleans, LA 70118", "cat": "music", "ll": [29.96031, -90.11552]}, "absinthe": {"name": "Old Absinthe House", "addr": "240 Bourbon St, New Orleans, LA 70130", "cat": "bar", "ll": [29.95536, -90.06847]}, "tujagues": {"name": "Tujague's", "addr": "429 Decatur St, New Orleans, LA 70130", "cat": "bar", "ll": [29.95503, -90.06451]}, "french75": {"name": "Arnaud's French 75 Bar", "addr": "813 Bienville St, New Orleans, LA 70112", "cat": "bar", "ll": [29.95574, -90.06868]}, "erinrose": {"name": "Erin Rose", "addr": "811 Conti St, New Orleans, LA 70112", "cat": "bar", "ll": [29.95655, -90.06794]}, "columns": {"name": "The Columns Hotel", "addr": "3811 St Charles Ave, New Orleans, LA 70115", "cat": "bar", "ll": [29.92744, -90.09615]}, "chartroom": {"name": "Chart Room", "addr": "300 Chartres St, New Orleans, LA 70130", "cat": "bar", "ll": [29.95427, -90.0665]}, "cure": {"name": "Cure", "addr": "4905 Freret St, New Orleans, LA 70115", "cat": "bar", "ll": [29.93503, -90.10755]}, "parkway": {"name": "Parkway Bakery & Tavern", "addr": "538 Hagan Ave, New Orleans, LA 70119", "cat": "food", "ll": [29.97332, -90.09061]}, "central": {"name": "Central Grocery & Deli", "addr": "923 Decatur St, New Orleans, LA 70116", "cat": "food", "ll": [29.95887, -90.06101]}, "portofcall": {"name": "Port of Call", "addr": "838 Esplanade Ave, New Orleans, LA 70116", "cat": "food", "ll": [29.96446, -90.06177]}, "turkeywolf": {"name": "Turkey and the Wolf", "addr": "739 Jackson Ave, New Orleans, LA 70130", "cat": "food", "ll": [29.92665, -90.07438]}, "toups": {"name": "Toups' Meatery", "addr": "845 N Carrollton Ave, New Orleans, LA 70119", "cat": "food", "ll": [29.97977, -90.09474]}, "compere": {"name": "Compère Lapin", "addr": "535 Tchoupitoulas St, New Orleans, LA 70130", "cat": "food", "ll": [29.94792, -90.06748]}, "cafebeignet": {"name": "Café Beignet", "addr": "334 Royal St, New Orleans, LA 70130", "cat": "food", "ll": [29.95535, -90.06685]}, "cochonbutcher": {"name": "Cochon Butcher", "addr": "930 Tchoupitoulas St, New Orleans, LA 70130", "cat": "food", "ll": [29.9422, -90.067]}, "commonsclub": {"name": "Commons Club at Virgin Hotels", "addr": "550 Baronne St, New Orleans, LA 70113", "cat": "food", "ll": [29.94942, -90.07318]}, "jacquesimos": {"name": "Jacques-Imo's Cafe", "addr": "8324 Oak St, New Orleans, LA 70118", "cat": "food", "ll": [29.94907, -90.13221]}, "beignetfest": {"name": "Beignet Fest (City Park Festival Grounds)", "addr": "1 Palm Dr, New Orleans, LA 70124", "cat": "event", "ll": [29.988, -90.0965]}, "longuevue": {"name": "Longue Vue House & Gardens", "addr": "7 Bamboo Rd, New Orleans, LA 70124", "cat": "see", "ll": [29.97676, -90.12336]}, "cabildo": {"name": "The Cabildo", "addr": "701 Chartres St, New Orleans, LA 70130", "cat": "see", "ll": [29.95767, -90.06381]}, "jacksonsq": {"name": "Jackson Square", "addr": "700 Decatur St, New Orleans, LA 70116", "cat": "see", "ll": [29.95693, -90.06274]}, "frenchmenart": {"name": "Frenchmen Art Bazaar", "addr": "619 Frenchmen St, New Orleans, LA 70116", "cat": "see", "ll": [29.96381, -90.05766]}, "algiers": {"name": "Algiers Point Ferry Landing", "addr": "1 Morgan St, New Orleans, LA 70114", "cat": "see", "ll": [29.95404, -90.05391]}};
+
+</script>
+<script>
+// ---------- state ----------
+const LS='nola-pocket-v1';
+let state={done:{},skipped:{},custom:[],queueDone:{}};
+let db=null, stateDoc=null, syncMode='local';
+try{ const m=location.hash.match(/^#s=(.+)$/); if(m){ const inc=JSON.parse(decodeURIComponent(escape(atob(m[1])))); state={done:{...state.done,...inc.done},skipped:{...state.skipped,...inc.skipped},queueDone:{...state.queueDone,...inc.queueDone},custom:[...state.custom,...(inc.custom||[]).filter(c=>!state.custom.some(x=>x.id===c.id))]}; localStorage.setItem(LS,JSON.stringify(state)); history.replaceState(null,'',location.pathname); } }catch(e){}
+try{ const s=localStorage.getItem(LS); if(s) state={...state,...JSON.parse(s)}; }catch(e){}
+function persist(){
+  try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){}
+  if(stateDoc){ stateDoc.set(state).catch(()=>{}); }
+}
+// standalone build: state lives in localStorage; share it between phones with the Share button
+
+
+// ---------- helpers ----------
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CAT={food:'Eat',bar:'Drink',music:'Music',see:'See',event:'Event',hotel:'Hotel',transit:'Travel'};
+function place(id){ if(!id) return null; const p=PLACES[id]; return p?{id,...p}:null; }
+function fmtT(t,tz){ if(!/^\d\d:\d\d$/.test(t)) return t; let [h,m]=t.split(':').map(Number); const ap=h>=12?'p':'a'; h=h%12||12; return `${h}:${String(m).padStart(2,'0')}${ap}${tz?' '+tz:''}`; }
+function mins(t){ const [h,m]=t.split(':').map(Number); return (h<5?h+24:h)*60+m; } // 00:30 counts as late night of same day
+let here=null; // {lat,lng,at}
+function km(a,b){ const R=6371,dl=(b[0]-a[0])*Math.PI/180,dg=(b[1]-a[1])*Math.PI/180,x=Math.sin(dl/2)**2+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dg/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
+function distStr(ll){ if(!here||!ll) return ''; const d=km([here.lat,here.lng],ll); const mi=d*0.621; const walk=Math.round(d/5*60); return mi<0.1?'right here':`${mi.toFixed(1)} mi · ${walk<60?walk+' min walk':'take a car'}`; }
+function mapBtns(p,cls=''){
+  if(!p||!p.ll) return '';
+  const [la,ln]=p.ll, q=encodeURIComponent(p.name), addr=encodeURIComponent(p.addr);
+  return `<a class="btn ${cls}" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${la},${ln}&dirflg=w&q=${q}">Directions</a>
+  <a class="btn ${cls}" target="_blank" rel="noopener" href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${la}&dropoff[longitude]=${ln}&dropoff[nickname]=${q}&dropoff[formatted_address]=${addr}">Uber</a>`;
+}
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800); }
+function nowCT(){ const d=new Date(); const p=new Intl.DateTimeFormat('en-US',{timeZone:TRIP.tz,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',weekday:'short'}).formatToParts(d); const o={}; p.forEach(x=>o[x.type]=x.value); return {date:`${o.year}-${o.month}-${o.day}`,hm:`${o.hour==='24'?'00':o.hour}:${o.minute}`,wd:o.weekday}; }
+function tripDayIndex(){ const n=nowCT(); let i=DAYS.findIndex(d=>d.date===n.date); if(i<0){ // before 5am, still "last night"
+  const prev=DAYS.findIndex(d=>{const dt=new Date(d.date+'T00:00:00'); dt.setDate(dt.getDate()+1); return dt.toISOString().slice(0,10)===n.date;}); if(prev>=0 && mins(n.hm)<5*60+24*60 && n.hm<'05:00') i=prev; }
+  return i; }
+function allStops(day){ const base=day.stops.map((s,i)=>({...s,key:`${day.id}:${i}`})); const extra=state.custom.filter(c=>c.day===day.id).map(c=>({...c,key:c.id,custom:true})); return base.concat(extra).sort((a,b)=>mins(a.t)-mins(b.t)); }
+function stopState(k){ return state.done[k]?'done':state.skipped[k]?'skipped':''; }
+
+// ---------- views ----------
+let curDay = (()=>{ const i=tripDayIndex(); return i>=0?DAYS[i].id:DAYS[0].id; })();
+let curCat='all', view='now';
+
+function stopHTML(s,isNext){
+  const p=place(s.p); const st=stopState(s.key);
+  return `<li class="stop ${st} ${isNext?'next':''}" data-k="${esc(s.key)}">
+    <div class="t">${fmtT(s.t)}${s.tz?`<small>${s.tz}</small>`:''}</div>
+    <div class="body">
+      <h3>${esc(s.title)}${s.status?`<span class="tag ${s.status}">${s.status==='booked'?'Booked':s.status==='book'?'Book':'Walk in'}</span>`:''}${s.custom?'<span class="tag custom">Added</span>':''}</h3>
+      <div class="where">${p?esc(p.addr.replace(/, New Orleans.*$/,'')) + ' · ':''}${esc(s.where||'')}${here&&p?` · <b>${distStr(p.ll)}</b>`:''}</div>
+      <div class="more">${esc(s.note||'')}${s.dress?`<span class="dress">${esc(s.dress)}</span>`:''}
+        <div class="actions">${mapBtns(p)}${s.link?`<a class="btn" target="_blank" rel="noopener" href="${esc(s.link)}">Book / site</a>`:''}${s.alt&&place(s.alt)?`<button class="btn" data-alt="${esc(s.alt)}">Alt: ${esc(place(s.alt).name)}</button>`:''}${st?`<button class="btn" data-undo="${esc(s.key)}">Undo</button>`:`<button class="btn skip" data-skip="${esc(s.key)}">Skip</button>`}${s.custom?`<button class="btn" data-del="${esc(s.key)}">Remove</button>`:''}</div>
+      </div>
+    </div>
+    <button class="tick" data-done="${esc(s.key)}" aria-label="Mark done">${st==='done'?'✓':st==='skipped'?'–':''}</button>
+  </li>`;
+}
+function nextStop(day){ const n=nowCT(); const live = n.date===day.date || tripDayIndex()>=0 && DAYS[tripDayIndex()].id===day.id; const list=allStops(day).filter(s=>!stopState(s.key)); if(!live) return list[0]; return list.find(s=>mins(s.t)+45>=mins(n.hm))||list[list.length-1]; }
+
+function renderNow(){
+  const day=DAYS.find(d=>d.id===curDay); const n=nowCT(); const ti=tripDayIndex();
+  const nx=nextStop(day); const p=nx?place(nx.p):null;
+  let head='';
+  if(ti<0){ const d0=new Date(DAYS[0].date+'T12:00:00'), dd=Math.ceil((d0-new Date())/864e5); head=`<p class="eyebrow">${dd>0?`Trip starts in ${dd} day${dd===1?'':'s'}`:'Trip is over — nice work'} · showing ${day.label}</p>`; }
+  else head=`<p class="eyebrow">${day.label} · ${day.sub}</p>`;
+  const stay=place(day.stay);
+  $('#v-now').innerHTML = head + (nx?`
+    <div class="hero">
+      <div class="when"><span>UP NEXT · ${fmtT(nx.t,nx.tz)}</span><span>${CAT[nx.cat]||''}</span></div>
+      <h2>${esc(nx.title)}</h2>
+      <div class="where">${[p?esc(p.addr):'',nx.where?esc(nx.where):''].filter(Boolean).join(' · ')}</div>
+      <p>${esc(nx.note||'')}</p>
+      ${nx.dress?`<span class="dress">${esc(nx.dress)}</span>`:''}
+      ${p&&here?`<div class="dist">${distStr(p.ll)} from you</div>`:''}
+      <div class="actions">${mapBtns(p,'primary')}${nx.link?`<a class="btn" target="_blank" rel="noopener" href="${esc(nx.link)}">Book / site</a>`:''}<button class="btn ok" data-done="${esc(nx.key)}">Done ✓</button><button class="btn skip" data-skip="${esc(nx.key)}">Skip</button></div>
+    </div>`:`<div class="hero"><h2>Nothing left today</h2><p>Everything's ticked. Go find something in the GO tab.</p></div>`) +
+  `<div class="row"><button class="btn" id="locate">${here?'Update my location':'Where am I?'}</button>${stay?`<a class="btn" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${stay.ll[0]},${stay.ll[1]}&dirflg=w">Back to ${esc(stay.name.split(' Hotel')[0].split(',')[0])}</a>`:''}<button class="btn" id="sharestate">Share my check-offs</button></div>
+  <h2 class="h2">Rest of ${day.label}</h2>
+  <ul class="stops">${allStops(day).map(s=>stopHTML(s,nx&&s.key===nx.key)).join('')}</ul>`;
+}
+function renderPlan(){
+  const day=DAYS.find(d=>d.id===curDay);
+  $('#v-plan').innerHTML=`<div class="chips">${DAYS.map(d=>`<button class="chip ${d.id===curDay?'on':''}" data-day="${d.id}"><b>${d.label.slice(0,3)}</b>${d.date.slice(8)}</button>`).join('')}</div>
+  <h2 class="h2">${day.label} <span style="font-family:var(--font-mono);font-size:.7rem;color:var(--brass);letter-spacing:.15em">NOV ${Number(day.date.slice(8))}</span></h2><p class="sub">${esc(day.sub)}</p>
+  <ul class="stops">${allStops(day).map(s=>stopHTML(s,false)).join('')}</ul>
+  <p class="note">Tap a stop for details and directions. Tick = done, Skip keeps it but greys it out. Things you add from the GO tab land here.</p>`;
+}
+function renderExplore(){
+  const cats=['all','food','bar','music','see','event'];
+  let list=EXTRAS.map(e=>({...e,pl:place(e.p)})).filter(e=>curCat==='all'||e.cat===curCat);
+  if(here) list.sort((a,b)=>km([here.lat,here.lng],a.pl.ll)-km([here.lat,here.lng],b.pl.ll));
+  const q=here?`${here.lat},${here.lng}`:'New Orleans, LA';
+  $('#v-explore').innerHTML=`<h2 class="h2">Find something else</h2><p class="sub">The vetted backups, ${here?'sorted by distance from you':'unsorted until you share your location'}.</p>
+  <div class="row"><button class="btn" id="locate2">${here?'Update location':'Where am I?'}</button>
+   <a class="btn" target="_blank" rel="noopener" href="https://maps.apple.com/?q=live+music${here?`&sll=${q}&z=15`:'+New+Orleans'}">Live music near me</a>
+   <a class="btn" target="_blank" rel="noopener" href="https://maps.apple.com/?q=restaurants${here?`&sll=${q}&z=15`:'+New+Orleans'}">Food near me</a>
+   <a class="btn" target="_blank" rel="noopener" href="https://www.wwoz.org/calendar/livewire-music">WWOZ Livewire</a></div>
+  <div class="ask"><p class="eyebrow">Ask for ideas</p><textarea id="askq" placeholder="e.g. somewhere for a drink with live blues within 10 minutes, or a late lunch that isn't seafood">${esc(askDefault())}</textarea>
+   <div class="row"><button class="btn primary" id="askgo">Build the question</button></div><div class="out" id="askout"></div>
+   <p class="note"></p></div>
+  <div class="cats">${cats.map(c=>`<button class="chip ${c===curCat?'on':''}" data-cat="${c}">${c==='all'?'All':CAT[c]}</button>`).join('')}</div>
+  ${list.map(e=>`<div class="card"><h3>${esc(e.title)} <span class="tag walk">${CAT[e.cat]}</span></h3><p class="why">${esc(e.why)}</p><div class="meta">${esc(e.pl.addr.replace(/, New Orleans.*$/,''))}${here?' · <b>'+distStr(e.pl.ll)+'</b>':''}</div><div class="row">${mapBtns(e.pl)}<button class="btn" data-add="${e.p}" data-title="${esc(e.title)}" data-cat="${e.cat}">+ Add to today</button></div></div>`).join('')}`;
+}
+function askDefault(){ const n=nowCT(); const h=Number(n.hm.slice(0,2)); return h<11?'Somewhere good for breakfast or coffee nearby':h<15?'A lunch spot nearby that isn\'t seafood':h<18?'Something interesting to do for the next two hours':'Live music nearby that isn\'t jazz, or a bar worth the walk'; }
+function renderBook(){
+  $('#v-book').innerHTML=`<h2 class="h2">Booking queue</h2><p class="sub">Sorted by the day to act. Everything opens online.</p>
+  <table><tbody>${QUEUE.map((r,i)=>`<tr class="${state.queueDone[i]?'done':''}"><td class="chk"><button class="tick" style="width:30px;height:30px" data-q="${i}">${state.queueDone[i]?'✓':''}</button></td><td class="when">${esc(r[0])}</td><td><b>${esc(r[1])}</b><br><span style="font-family:var(--font-mono);font-size:.72rem;color:var(--muted)">${esc(r[2])}</span><br><span style="font-size:.85rem">${esc(r[3])}</span></td></tr>`).join('')}</tbody></table>`;
+}
+function renderInfo(){
+  $('#v-info').innerHTML=`<h2 class="h2">${TRIP.title}</h2><p class="sub">${TRIP.dates}</p>
+  <div class="facts">${TRIP.facts.map(f=>`<div><small>${esc(f[0])}</small><b>${esc(f[1])}</b><span>${esc(f[2])}</span></div>`).join('')}</div>
+  <h2 class="h2">Every address</h2>
+  ${Object.entries(PLACES).sort((a,b)=>a[1].name.localeCompare(b[1].name)).map(([id,p])=>`<div class="stop" style="grid-template-columns:1fr auto"><div class="body"><h3 style="font-size:.95rem">${esc(p.name)}</h3><div class="where">${esc(p.addr)}</div></div><a class="btn" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${p.ll[0]},${p.ll[1]}&dirflg=w">Go</a></div>`).join('')}
+  <p class="note">Built Sept 2026 from the trip workbook. Runs entirely on this phone. “Share my check-offs” on the NOW tab pushes your ticks to the other phone.</p>`;
+}
+function renderAll(){ renderNow(); renderPlan(); renderExplore(); renderBook(); renderInfo(); }
+function tick(){ const n=nowCT(); $('#clock').innerHTML=`${n.wd} ${fmtT(n.hm)} CT<br>${here?'located '+Math.round((Date.now()-here.at)/60000)+' min ago':'not located'}`; }
+
+// ---------- events ----------
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button,a'); if(!b) return;
+  if(b.dataset.v){ view=b.dataset.v; document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); document.querySelectorAll('section.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+view)); window.scrollTo(0,0); return; }
+  if(b.dataset.day){ curDay=b.dataset.day; renderPlan(); renderNow(); return; }
+  if(b.dataset.cat){ curCat=b.dataset.cat; renderExplore(); return; }
+  if(b.dataset.done!==undefined){ const k=b.dataset.done; if(state.done[k]){delete state.done[k];} else {state.done[k]=true; delete state.skipped[k];} persist(); renderNow(); renderPlan(); return; }
+  if(b.dataset.skip!==undefined){ state.skipped[b.dataset.skip]=true; delete state.done[b.dataset.skip]; persist(); renderNow(); renderPlan(); toast('Skipped'); return; }
+  if(b.dataset.undo!==undefined){ delete state.done[b.dataset.undo]; delete state.skipped[b.dataset.undo]; persist(); renderNow(); renderPlan(); return; }
+  if(b.dataset.del!==undefined){ state.custom=state.custom.filter(c=>c.id!==b.dataset.del); persist(); renderNow(); renderPlan(); return; }
+  if(b.dataset.q!==undefined){ const i=b.dataset.q; state.queueDone[i]=!state.queueDone[i]; persist(); renderBook(); return; }
+  if(b.dataset.alt){ const p=place(b.dataset.alt); const ex=EXTRAS.find(x=>x.p===b.dataset.alt); toast(p.name); addCustom(b.dataset.alt,p.name,ex?ex.cat:'see',ex?ex.why:''); return; }
+  if(b.dataset.add){ addCustom(b.dataset.add,b.dataset.title,b.dataset.cat,EXTRAS.find(x=>x.p===b.dataset.add)?.why||''); return; }
+  if(b.id==='locate'||b.id==='locate2'){ locate(); return; }
+  if(b.id==='askgo'){ ask(); return; }
+  if(b.id==='sharestate'){ shareState(); return; }
+});
+document.addEventListener('click',e=>{ const li=e.target.closest('li.stop'); if(li && !e.target.closest('button,a')) li.classList.toggle('open'); });
+function addCustom(pid,title,cat,why){
+  const n=nowCT(); const ti=tripDayIndex(); const day=ti>=0?DAYS[ti].id:curDay;
+  const t = ti>=0 ? n.hm : '12:00';
+  const p=place(pid);
+  state.custom.push({id:'c'+Date.now(),day,t,p:pid,title,cat,where:p?p.addr.replace(/, New Orleans.*$/,''):'',note:why,status:'walk'});
+  persist(); curDay=day; renderNow(); renderPlan(); toast('Added to '+DAYS.find(d=>d.id===day).label);
+}
+function locate(){
+  if(!navigator.geolocation){ toast('No location on this browser'); return; }
+  toast('Locating…');
+  navigator.geolocation.getCurrentPosition(pos=>{ here={lat:pos.coords.latitude,lng:pos.coords.longitude,at:Date.now()}; renderAll(); tick(); toast('Located'); },()=>toast('Location blocked — check browser settings'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+}
+async function shareState(){
+  const enc=btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  const url=location.origin+location.pathname+'#s='+enc;
+  try{ if(navigator.share){ await navigator.share({title:'NOLA Pocket',text:'Open to sync my check-offs: '+url}); return; } }catch(e){}
+  try{ await navigator.clipboard.writeText(url); toast('Link copied — text it over'); }catch(e){ prompt('Copy this link',url); }
+}
+function ask(){
+  const out=$('#askout'); const q=$('#askq').value.trim(); if(!q) return;
+  const n=nowCT(); const ti=tripDayIndex(); const day=DAYS.find(d=>d.id===(ti>=0?DAYS[ti].id:curDay));
+  const planned=allStops(day).map(s=>`${fmtT(s.t)} ${s.title}${stopState(s.key)?' ('+stopState(s.key)+')':''}`).join('; ');
+  const nearest = here ? Object.values(PLACES).map(p=>({p,d:km([here.lat,here.lng],p.ll)})).sort((a,b)=>a.d-b.d)[0].p.name : null;
+  const stay=place(day.stay);
+  const prompt=`You are a sharp New Orleans local acting as concierge for a couple, Noel and Malinda, visiting Nov 5–10, 2026. Right now it is ${n.wd} ${fmtT(n.hm)} Central${ti<0?' (planning ahead for '+day.label+')':''}. ${here?`We are at about ${here.lat.toFixed(4)}, ${here.lng.toFixed(4)} (near ${nearest}).`:`Our hotel is ${stay?stay.name+', '+stay.addr:'in the CBD'}.`}
+Rules: Noel does not eat seafood (needs solid non-seafood mains). Noel does not like jazz; Malinda does — prefer blues, funk, brass band, rock, dueling pianos or zydeco, and flag anything that is jazz. No phone-only reservations. Walking distance or a short rideshare. No Bourbon Street tourist traps unless asked.
+Already planned today (don't repeat): ${planned}.
+Request: ${q}
+Give 4 to 6 specific options with street address, why, rough cost, hours if known, and whether it's jazz.`;
+  const enc=encodeURIComponent(prompt);
+  out.innerHTML=`<div class="row"><a class="btn primary" target="_blank" rel="noopener" href="https://claude.ai/new?q=${enc}">Ask in Claude</a><a class="btn" target="_blank" rel="noopener" href="https://chatgpt.com/?q=${enc}">Ask in ChatGPT</a><a class="btn" target="_blank" rel="noopener" href="https://maps.apple.com/?q=${encodeURIComponent(q)}${here?`&sll=${here.lat},${here.lng}&z=15`:'+New+Orleans'}">Search Apple Maps</a></div><p class="note">Opens your question — date, time, location, today's plan and the house rules already filled in — in whichever app you have.</p>`;
+}
+renderAll(); tick(); setInterval(tick,30000); setInterval(()=>{ if(view==='now') renderNow(); },120000);
+</script>
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{});}</script>
+</body>
+</html>
