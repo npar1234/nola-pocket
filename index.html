@@ -447,7 +447,8 @@ function renderInfo(){
   ${Object.entries(PLACES).sort((a,b)=>a[1].name.localeCompare(b[1].name)).map(([id,p])=>`<div class="stop" style="grid-template-columns:1fr auto"><div class="body"><h3 style="font-size:.95rem">${esc(p.name)}</h3><div class="where">${esc(p.addr)}</div></div><a class="btn" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${p.ll[0]},${p.ll[1]}&dirflg=w">Go</a></div>`).join('')}
   <p class="note">Built Sept 2026 from the trip workbook. State ${syncMode==='shared'?'syncs between everyone who opens this page':'is saved on this device'}.</p>`;
 }
-function renderAll(){ renderNow(); renderPlan(); renderExplore(); renderBook(); renderInfo(); }
+function safe(fn,label){ try{ fn(); }catch(err){ console.error(label,err); const el=document.querySelector('#v-'+label); if(el) el.innerHTML='<h2 class="h2">This view hit an error</h2><p class="sub">'+String(err.message||err)+'</p><p class="note">The other tabs still work. Tell Claude what this says.</p>'; } }
+function renderAll(){ safe(renderNow,'now'); safe(renderPlan,'plan'); safe(renderExplore,'explore'); safe(renderBook,'book'); safe(renderInfo,'info'); }
 function tick(){ const n=nowCT(); $('#clock').innerHTML=`${n.wd} ${fmtT(n.hm)} CT<br>${here?'located '+Math.round((Date.now()-here.at)/60000)+' min ago':'not located'}`; }
 
 // ---------- events ----------
@@ -508,11 +509,11 @@ renderAll(); tick(); setInterval(tick,30000); setInterval(()=>{ if(view==='now')
 </script>
 <script>
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").then(r=>{ r.update(); setInterval(()=>r.update(), 60*60*1000); }).catch(()=>{});
+  navigator.serviceWorker.register("sw.js").then(r=>{ r.update(); setInterval(()=>r.update(), 30*60*1000); }).catch(()=>{});
   let reloaded=false;
-  navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded) return; reloaded=true; location.reload(); });
+  const once=()=>{ if(reloaded) return; reloaded=true; location.reload(); };
+  navigator.serviceWorker.addEventListener("controllerchange", once);
+  // the worker tells us when the shell it fetched in the background differs
+  navigator.serviceWorker.addEventListener("message", ev=>{ if(ev.data && ev.data.type==="shell-updated") once(); });
 }
 </script>
-
-</body>
-</html>
