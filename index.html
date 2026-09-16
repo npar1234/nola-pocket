@@ -333,7 +333,7 @@ function stopState(k){ return state.done[k]?'done':state.skipped[k]?'skipped':''
 
 // ---------- views ----------
 let curDay = (()=>{ const i=tripDayIndex(); return i>=0?DAYS[i].id:DAYS[0].id; })();
-let curCat='all', view='now';
+let curCat='all', view='now'; let onlyWalk=false, onlyOpen=false;
 
 
 function anchorLine(day){
