@@ -1,8 +1,8 @@
-// BUILD:20260916-183421
+// BUILD:20260916-183453
 // Network-first for the app shell so an update is never invisible;
 // cache-first for icons. The cache name carries the build stamp, so every
 // deploy retires the previous cache instead of serving it forever.
-const C = 'nola-pocket-20260916-183421';
+const C = 'nola-pocket-20260916-183453';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {
