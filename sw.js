@@ -1,8 +1,8 @@
-// BUILD:20260916-183453
+// BUILD:20260916-184334
 // Network-first for the app shell so an update is never invisible;
 // cache-first for icons. The cache name carries the build stamp, so every
 // deploy retires the previous cache instead of serving it forever.
-const C = 'nola-pocket-20260916-183453';
+const C = 'nola-pocket-20260916-184334';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {
@@ -10,11 +10,17 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
-  );
+  e.waitUntil((async () => {
+    const ks = await caches.keys();
+    await Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)));
+    await self.clients.claim();
+    // The worker we are replacing was cache-first with a fixed cache name, so an
+    // already-installed app can be holding a stale shell with no way to know it.
+    // Now that we control those windows, reload them ourselves. Runs once per
+    // worker version, so it cannot loop.
+    const cs = await self.clients.matchAll({ type: 'window' });
+    for (const c of cs) { try { await c.navigate(c.url); } catch (_) {} }
+  })());
 });
 
 self.addEventListener('fetch', e => {
