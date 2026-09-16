@@ -147,12 +147,14 @@ tr.done td{color:var(--muted);text-decoration:line-through}
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
+// ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
+// ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 const TRIP = {
   title: "New Orleans", dates: "Thu Nov 5 – Tue Nov 10, 2026", tz: "America/Chicago",
   facts: [
     ["Nights 1–3", "The Old No. 77", "535 Tchoupitoulas · ref 2555774687 · free cancel to Nov 4, 4pm"],
     ["Nights 4–5", "Virgin Hotels", "550 Baronne · The Edit: breakfast for two, late checkout"],
-    ["Flights", "Southwest nonstop", "LAS 12:10p out Thu · MSY afternoon back Tue · A-List: check 48h out"],
+    ["Flights", "Southwest nonstop", "Conf CFX3RD · LAS 7:40a → MSY 1:00p Thu · MSY back Tue · A-List: check 48h out"],
     ["Airport", "Taxi $36 flat", "Baggage Claim Level 1, Door 7 · Uber $22–36 off-peak"],
     ["Card", "Chase Sapphire Reserve", "Pay Virgin charges in cash (no points) so both $250 credits fire"],
     ["Rules", "No seafood · no phone calls", "Every reservation on this list books online"],
@@ -161,13 +163,16 @@ const TRIP = {
 
 // status: booked | book | walk
 const DAYS = [
-  { id:"thu", label:"Thursday", date:"2026-11-05", sub:"Land, settle in, one set of jazz.", stay:"old77", stops:[
-    { t:"12:10", tz:"PT", p:null, title:"LAS → MSY, Southwest", status:"booked", cat:"transit", where:"Nonstop · ~3h 25m · two Choice fares, one reservation", note:"Sleep in — the convention ended yesterday. Check the app 48 hours before: A-List gets Extra Legroom free if a row is open." },
-    { t:"17:35", p:"msy", title:"Land MSY", cat:"transit", where:"Taxi $36 flat (Level 1, Door 7) · 20–30 min · Uber $22–36", note:"Dark by 5 — tonight is a settling-in evening." },
-    { t:"18:15", p:"old77", title:"Check in, The Old No. 77", status:"booked", cat:"hotel", key:true, where:"ref 2555774687 · $100 deposit + $62.70 fees at the desk", note:"Chase booked you a CLASSIC, 1 queen — its window opens onto an interior lightwell, not the street. At check-in ask to be moved to a GRANDE, TCHOUPITOULAS KING or ARTIST LOFT SUITE (all outward-facing). Refuse INTERIOR — those are windowless by design. Hotel is sold out for these dates, so an upgrade depends on a no-show; ask anyway, politely, and mention the birthday. An 1854 warehouse — exposed brick, local art, cast-iron columns." },
-    { t:"19:00", p:"cochon", title:"Dinner at Cochon", status:"book", cat:"food", key:true, where:"Two blocks up the street · 3-min walk", note:"Cajun pork: cochon de lait, boudin, smoked ham hock, rabbit and dumplings. Best non-seafood table in the city.", link:"https://cochonrestaurant.com" },
-    { t:"20:45", p:"preshall", title:"Preservation Hall", status:"book", cat:"music", key:true, where:"10-min walk · 35–40 min set · tickets post ~mid-Oct", note:"Traditional jazz in a room standing since 1750. Malinda's night. Non-refundable — grab the 8:45 when November opens.", link:"https://www.preservationhall.com" },
-    { t:"21:45", p:"lafittes", title:"Lafitte's Blacksmith Shop", status:"walk", cat:"bar", where:"8-min walk · cash bar · piano in the back room", note:"1770s brick cottage lit by candles — the oldest bar building in the country. One drink, then the 15-min walk home down Chartres." },
+  { id:"thu", label:"Thursday", date:"2026-11-05", sub:"Land at one, a muffuletta by the river, floats, then the first big night.", stay:"old77", stops:[
+    { t:"07:40", tz:"PT", p:null, title:"LAS \u2192 MSY, Southwest", status:"booked", cat:"transit", where:"Conf CFX3RD \u00b7 nonstop \u00b7 in at 1:00pm \u00b7 two Choice fares, one reservation", note:"Early one \u2014 out the door around 6. Check the app 48 hours before: A-List gets Extra Legroom free if a row is open." },
+    { t:"13:00", p:"msy", title:"Land MSY", cat:"transit", where:"Taxi $36 flat (Level 1, Door 7) \u00b7 20\u201330 min \u00b7 Uber $22\u201336", note:"You have the whole afternoon. Dark by 5, so front-load the outdoor part." },
+    { t:"13:45", p:"old77", title:"Drop bags at The Old No. 77 \u2014 and ask for the room now", status:"booked", cat:"hotel", key:true, where:"ref 2555774687 \u00b7 $100 deposit + $62.70 fees at the desk \u00b7 rooms ready at 4", note:"Chase booked you a CLASSIC, 1 queen \u2014 its window opens onto an interior lightwell, not the street. Make the ask at bag drop, not at 4pm: say you\u2019d like to be moved to a GRANDE, TCHOUPITOULAS KING or ARTIST LOFT SUITE, and that it\u2019s Malinda\u2019s birthday trip. Refuse INTERIOR \u2014 those are windowless by design. Early afternoon is when the desk still has rooms uncommitted; by evening it\u2019s whatever is left. An 1854 warehouse \u2014 exposed brick, local art, cast-iron columns." },
+    { t:"14:30", p:"central", title:"Muffuletta at Central Grocery, eaten on the river", status:"walk", cat:"food", key:true, where:"15-min walk into the Quarter \u00b7 Decatur St \u00b7 walk-in, cash-friendly", note:"Since 1906, and the sandwich was invented there. Get a half between you \u2014 a whole is genuinely a meal for three \u2014 and carry it across Decatur to the Moon Walk to eat it looking at the Mississippi. This is also your orientation walk." },
+    { t:"15:45", p:"mgworld", title:"Mardi Gras World", status:"walk", cat:"see", key:true, where:"~25-min walk back down the riverfront \u00b7 $25 \u00b7 hourly tours, last one 4:30", note:"The warehouse where the floats are actually built \u2014 acres of half-finished kings and gators, artists working. It\u2019s five minutes from the hotel and nobody plans for it. Good jet-lag activity: indoors, an hour, no thinking required.", link:"https://www.mardigrasworld.com" },
+    { t:"17:00", p:"old77", title:"Back to the hotel, check in properly", cat:"hotel", where:"5-min walk \u00b7 unpack, shower, reset", note:"If the desk didn\u2019t move you at bag drop, ask again now \u2014 shift change means a different person." },
+    { t:"19:00", p:"cochon", title:"Dinner at Cochon", status:"book", cat:"food", key:true, where:"Two blocks up the street \u00b7 3-min walk", note:"Cajun pork: cochon de lait, boudin, smoked ham hock, rabbit and dumplings. Best non-seafood table in the city.", link:"https://cochonrestaurant.com" },
+    { t:"20:45", p:"preshall", title:"Preservation Hall", status:"book", cat:"music", key:true, where:"10-min walk \u00b7 35\u201340 min set \u00b7 tickets post ~mid-Oct", note:"Traditional jazz in a room standing since 1750. Malinda\u2019s night. Non-refundable \u2014 grab the 8:45 when November opens.", link:"https://www.preservationhall.com" },
+    { t:"21:45", p:"lafittes", title:"Lafitte\u2019s Blacksmith Shop", status:"walk", cat:"bar", where:"8-min walk \u00b7 cash bar \u00b7 piano in the back room", note:"1770s brick cottage lit by candles \u2014 the oldest bar building in the country. One drink, then the 15-min walk home down Chartres." },
   ]},
   { id:"fri", label:"Friday", date:"2026-11-06", sub:"One old house, one odd museum, then the lunch people plan trips around.", stay:"old77", stops:[
     { t:"10:00", p:"hermann", title:"Hermann-Grima House", status:"book", cat:"see", key:true, where:"Guided, on the hour · ~45 min · $20", note:"The one house tour: an 1831 mansion, working open-hearth kitchen, stable, courtyard ironwork. Closed Tuesdays.", link:"https://hgghh.org" },
