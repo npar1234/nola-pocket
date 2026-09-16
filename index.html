@@ -150,13 +150,14 @@ tr.done td{color:var(--muted);text-decoration:line-through}
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
+// ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 const TRIP = {
   title: "New Orleans", dates: "Thu Nov 5 – Tue Nov 10, 2026", tz: "America/Chicago",
   facts: [
     ["Nights 1–3", "The Old No. 77", "535 Tchoupitoulas · ref 2555774687 · free cancel to Nov 4, 4pm"],
     ["Nights 4–5", "Virgin Hotels", "550 Baronne · The Edit: breakfast for two, late checkout"],
     ["Flights", "Southwest nonstop", "Conf CFX3RD · LAS 7:40a → MSY 1:00p Thu · MSY back Tue · A-List: check 48h out"],
-    ["Airport", "Taxi $36 flat", "Baggage Claim Level 1, Door 7 · Uber $22–36 off-peak"],
+    ["Airport", "Taxi $36 flat", "Baggage Claim Level 1, Door 7 · use Lyft not Uber ($10/mo card credit + 5x points) off-peak"],
     ["Card", "Chase Sapphire Reserve", "Pay Virgin charges in cash (no points) so both $250 credits fire"],
     ["Rules", "No seafood · no phone calls", "Every reservation on this list books online"],
   ],
@@ -185,7 +186,7 @@ const DAYS = [
     { t:"23:30", p:"washsq", title:"Bayou Bacchanal Pre Fete (optional)", status:"walk", cat:"event", where:"Wear white · Marigny", note:"Only if you're still standing." },
   ]},
   { id:"sat", label:"Saturday", date:"2026-11-07", sub:"The celebration day. Something on fire at both ends of it.", stay:"old77", stops:[
-    { t:"10:15", p:"brennans", title:"Brennan's", status:"booked", cat:"food", key:true, where:"The pink building · out by ~noon", note:"Eggs Hussarde, turtle soup (veal), Bananas Foster flambéed tableside — invented here in 1951.", dress:"Collared shirt, long pants, closed shoes" },
+    { t:"10:15", p:"brennans", title:"Brennan's", status:"booked", cat:"food", key:true, where:"The pink building · out by ~noon", note:"Eggs Hussarde, turtle soup (veal), Bananas Foster flambéed tableside — invented here in 1951. PAY WITH THE SAPPHIRE RESERVE: Brennan’s is the only restaurant on this trip in Chase’s Exclusive Tables program, and you have $150 of dining credit unused and expiring Dec 31. This one meal captures all of it.", dress:"Collared shirt, long pants, closed shoes" },
     { t:"13:00", p:"basin", title:"St. Louis Cemetery No. 1, guided", status:"book", cat:"see", key:true, where:"Check in at Basin St. Station · $29 pp · ~55 min · every 15 min to 4pm", note:"1789, the oldest in the city. Whitewashed for All Saints' five days ago. Marie Laveau's tomb is the stop everyone waits for.", link:"https://cemeterytourneworleans.com" },
     { t:"14:15", p:"voodooauth", title:"Voodoo Authentica", status:"walk", cat:"see", key:true, where:"12-min walk · run by initiated practitioners since 1996", note:"Gris-gris made to order at the counter — say what it's for. Readings in the back. The Historic Voodoo Museum is a block up ($10) if you want more.", alt:"voodoomuseum" },
     { t:"15:15", p:"washsq", title:"Bayou Bacchanal", status:"walk", cat:"event", where:"Festival ~11am–9pm · route posts ~1 wk out · 20-min walk from Dumaine", note:"Caribbean masquerade parade into a festival — costumes, soca, jerk everything. Check friendsofculture.org late October. Fallback: Beignet Fest, City Park.", link:"https://friendsofculture.org", alt:"beignetfest" },
