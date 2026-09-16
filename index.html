@@ -152,6 +152,7 @@ tr.done td{color:var(--muted);text-decoration:line-through}
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 // ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
+// ---- Trip data. Times are Central. `p` keys into PLACES for address + coordinates.
 const TRIP = {
   title: "New Orleans", dates: "Thu Nov 5 – Tue Nov 10, 2026", tz: "America/Chicago",
   facts: [
@@ -179,16 +180,16 @@ const DAYS = [
     { t:"21:45", p:"lafittes", title:"Lafitte\u2019s Blacksmith Shop", status:"walk", cat:"bar", where:"941 Bourbon \u00b7 8-min walk \u00b7 cash bar \u00b7 piano in the back", note:"1770s brick cottage lit by candles \u2014 the oldest bar building in the country. One drink, then a Lyft home." },
   ]},
   { id:"fri", label:"Friday", date:"2026-11-06", sub:"One old house, one odd museum, then the lunch people plan trips around.", stay:"nopsi", stops:[
-    { t:"10:00", p:"hermann", title:"Hermann-Grima House", status:"book", cat:"see", key:true, where:"Guided, on the hour · ~45 min · $20", note:"The one house tour: an 1831 mansion, working open-hearth kitchen, stable, courtyard ironwork. Closed Tuesdays.", link:"https://hgghh.org" },
+    { t:"10:00", p:"hermann", title:"Hermann-Grima House", status:"book", cat:"see", key:true, where:"12-min walk from NOPSI · guided, on the hour · ~45 min · $20", note:"The one house tour: an 1831 mansion, working open-hearth kitchen, stable, courtyard ironwork. Closed Tuesdays.", link:"https://hgghh.org" },
     { t:"11:30", p:"pharmacy", title:"New Orleans Pharmacy Museum", status:"walk", cat:"see", where:"$10 · Tue–Sat 11–4 · 6-min walk · 30–40 min", note:"America's first licensed pharmacy, 1823: leeches, voodoo potions, a carved soda fountain. On the way to Galatoire's." },
-    { t:"13:30", p:"galatoires", title:"Galatoire's Friday lunch", status:"book", cat:"food", key:true, where:"Resy ~Oct 7 · 1905 · closed Mondays", note:"Souffléed potatoes, filet béarnaise, Chicken Clemenceau. Collared shirt and long pants; jackets only matter after 5pm.", dress:"Collared shirt and long pants — no jacket at lunch", link:"https://resy.com" },
+    { t:"13:30", p:"galatoires", title:"Galatoire's Friday lunch", status:"book", cat:"food", key:true, where:"Resy ~Oct 7 · 1905 · 8-min walk from NOPSI · closed Mondays", note:"Souffléed potatoes, filet béarnaise, Chicken Clemenceau. Collared shirt and long pants; jackets only matter after 5pm.", dress:"Collared shirt and long pants — no jacket at lunch", link:"https://resy.com" },
     { t:"16:30", p:"napoleon", title:"Napoleon House", status:"walk", cat:"bar", where:"6-min walk · 1797 building · the Pimm's Cup", note:"Peeling walls, classical music, the balcony meant for Napoleon. Let a three-hour lunch settle." },
-    { t:"19:30", p:"dooky", title:"Dooky Chase's", status:"book", cat:"food", key:true, where:"OpenTable ~Oct 7 · dinner Fri & Sat only · $12 Uber", note:"Leah Chase's Creole institution since 1941 — fried chicken, gumbo, red beans, the art on the walls.", link:"https://www.opentable.com" },
-    { t:"21:30", p:"chickie", title:"Eric Lindell at Chickie Wah Wah", status:"book", cat:"music", key:true, where:"6-min Uber from Dooky Chase · small room · swamp blues", note:"Noel's night: Louisiana blue-eyed soul, a guitar player's guitar player. Malinda's alternative: Kermit Ruffins at Blue Nile, 10pm.", link:"https://www.chickiewahwah.com", alt:"bluenile" },
+    { t:"19:30", p:"dooky", title:"Dooky Chase's", status:"book", cat:"food", key:true, where:"OpenTable ~Oct 7 · dinner Fri & Sat only · $12 Lyft", note:"Leah Chase's Creole institution since 1941 — fried chicken, gumbo, red beans, the art on the walls.", link:"https://www.opentable.com" },
+    { t:"21:30", p:"chickie", title:"Eric Lindell at Chickie Wah Wah", status:"book", cat:"music", key:true, where:"6-min Lyft from Dooky Chase · small room · swamp blues", note:"Noel's night: Louisiana blue-eyed soul, a guitar player's guitar player. Malinda's alternative: Kermit Ruffins at Blue Nile, 10pm.", link:"https://www.chickiewahwah.com", alt:"bluenile" },
     { t:"23:30", p:"washsq", title:"Bayou Bacchanal Pre Fete (optional)", status:"walk", cat:"event", where:"Wear white · Marigny", note:"Only if you're still standing." },
   ]},
   { id:"sat", label:"Saturday", date:"2026-11-07", sub:"The celebration day. Something on fire at both ends of it.", stay:"nopsi", stops:[
-    { t:"10:15", p:"brennans", title:"Brennan's", status:"booked", cat:"food", key:true, where:"The pink building · out by ~noon", note:"Eggs Hussarde, turtle soup (veal), Bananas Foster flambéed tableside — invented here in 1951. PAY WITH THE SAPPHIRE RESERVE: Brennan’s is the only restaurant on this trip in Chase’s Exclusive Tables program, and you have $150 of dining credit unused and expiring Dec 31. This one meal captures all of it.", dress:"Collared shirt, long pants, closed shoes" },
+    { t:"10:15", p:"brennans", title:"Brennan's", status:"booked", cat:"food", key:true, where:"417 Royal · 12-min walk from NOPSI · the pink building · out by ~noon", note:"Eggs Hussarde, turtle soup (veal), Bananas Foster flambéed tableside — invented here in 1951. PAY WITH THE SAPPHIRE RESERVE: Brennan’s is the only restaurant on this trip in Chase’s Exclusive Tables program, and you have $150 of dining credit unused and expiring Dec 31. This one meal captures all of it.", dress:"Collared shirt, long pants, closed shoes" },
     { t:"13:00", p:"basin", title:"St. Louis Cemetery No. 1, guided", status:"book", cat:"see", key:true, where:"Check in at Basin St. Station · $29 pp · ~55 min · every 15 min to 4pm", note:"1789, the oldest in the city. Whitewashed for All Saints' five days ago. Marie Laveau's tomb is the stop everyone waits for.", link:"https://cemeterytourneworleans.com" },
     { t:"14:15", p:"voodooauth", title:"Voodoo Authentica", status:"walk", cat:"see", key:true, where:"12-min walk · run by initiated practitioners since 1996", note:"Gris-gris made to order at the counter — say what it's for. Readings in the back. The Historic Voodoo Museum is a block up ($10) if you want more.", alt:"voodoomuseum" },
     { t:"15:15", p:"washsq", title:"Bayou Bacchanal", status:"walk", cat:"event", where:"Festival ~11am–9pm · route posts ~1 wk out · 20-min walk from Dumaine", note:"Caribbean masquerade parade into a festival — costumes, soca, jerk everything. Check friendsofculture.org late October. Fallback: Beignet Fest, City Park.", link:"https://friendsofculture.org", alt:"beignetfest" },
@@ -211,10 +212,10 @@ const DAYS = [
     { t:"12:30", p:"mothers", title:"Mother's", status:"walk", cat:"food", key:true, where:"8-min walk · 7am–10pm · no reservations", note:"The Ferdi Special — baked ham, roast beef and debris in gravy. The most famous cafeteria line in the city." },
     { t:"14:00", p:"sazhouse", title:"Sazerac House", status:"book", cat:"see", key:true, where:"Free — reserve online · 5-min walk · last tour 4:45", note:"Three floors and a working micro-distillery on the cocktail New Orleans invented, with tastings. About an hour.", link:"https://www.sazerachouse.com" },
     { t:"15:30", p:"carousel", title:"Carousel Bar, then the Algiers ferry", status:"walk", cat:"bar", where:"Hotel Monteleone · then Canal St ferry, 10-min walk · $2 · every 30 min", note:"One drink at the bar that rotates every fifteen minutes, then the five-minute ferry across for the skyline at sunset.", alt:"ferry" },
-    { t:"17:30", p:"bacchanal", title:"Bacchanal Wine", status:"walk", cat:"food", key:true, where:"Bywater · backyard music 5–10 · $12 Uber · no reservations, ever", note:"Pick a bottle inside, cheese and charcuterie from the counter, sit in the yard. Burger alternative: Port of Call.", alt:"portofcall" },
+    { t:"17:30", p:"bacchanal", title:"Bacchanal Wine", status:"walk", cat:"food", key:true, where:"Bywater · backyard music 5–10 · $12 Lyft · no reservations, ever", note:"Pick a bottle inside, cheese and charcuterie from the counter, sit in the yard. Burger alternative: Port of Call.", alt:"portofcall" },
     { t:"20:30", p:"bjs", title:"Red Beans & Blues at BJ's Lounge", status:"walk", cat:"music", key:true, where:"10-min walk from Bacchanal · Mondays 9pm · free · cash bar", note:"Washboard Chaz and friends in the best dive in the Bywater. Little Freddie King plays here when booked — check WWOZ the week of." },
-    { t:"22:30", p:"mapleleaf", title:"George Porter Jr. Trio at the Maple Leaf", status:"book", cat:"music", key:true, where:"Late show 10pm · 21+ · $25 Uber from BJ's, 25 min", note:"The bassist of The Meters in his Monday residency. Noel's night to close on. Malinda's alternative: Corey Henry at d.b.a., 9:30.", link:"https://www.mapleleafbar.com", alt:"dba" },
-    { t:"00:30", p:"snakejake", title:"Snake and Jake's Christmas Club Lounge", status:"walk", cat:"bar", where:"3-min walk · cash · until dawn", note:"A shack lit by Christmas lights. One drink, then an Uber to Baronne. Late checkout makes this possible." },
+    { t:"22:30", p:"mapleleaf", title:"George Porter Jr. Trio at the Maple Leaf", status:"book", cat:"music", key:true, where:"Late show 10pm · 21+ · $25 Lyft from BJ's, 25 min", note:"The bassist of The Meters in his Monday residency. Noel's night to close on. Malinda's alternative: Corey Henry at d.b.a., 9:30.", link:"https://www.mapleleafbar.com", alt:"dba" },
+    { t:"00:30", p:"snakejake", title:"Snake and Jake's Christmas Club Lounge", status:"walk", cat:"bar", where:"3-min walk · cash · until dawn", note:"A shack lit by Christmas lights. One drink, then a Lyft to Baronne. Late checkout makes this possible." },
   ]},
   { id:"tue", label:"Tuesday", date:"2026-11-10", sub:"Beignets and out.", stay:"virgin", stops:[
     { t:"09:00", p:"commonsclub", title:"Breakfast for two, Commons Club", status:"booked", cat:"food", where:"Included — The Edit perk", note:"Sleep in. Late checkout too." },
@@ -228,7 +229,7 @@ const DAYS = [
 const EXTRAS = [
   { p:"metairie", cat:"see", title:"Metairie Cemetery", why:"150 acres on an old racetrack, Egyptian Revival and Greek temples. Free, self-guided, sunrise to sunset. ~20 min out." },
   { p:"gallier", cat:"see", title:"Gallier House", why:"The architect's own 1857 townhouse. Guided at :30 past, $34 combo with Hermann-Grima. Closed Tue." },
-  { p:"mgworld", cat:"see", title:"Mardi Gras World", why:"The float warehouse — see next year's floats being built. ~$25, 1-hr tour, 15-min walk from the 77." },
+  { p:"mgworld", cat:"see", title:"Mardi Gras World", why:"The float warehouse — see next year's floats being built. ~$25, 1-hr tour. Riverfront in the Warehouse District — a short Lyft from NOPSI, not a walk." },
   { p:"backstreet", cat:"see", title:"Backstreet Cultural Museum", why:"Mardi Gras Indian suits, second-line and jazz funeral history, in Tremé. Small, essential." },
   { p:"besthoff", cat:"see", title:"Besthoff Sculpture Garden", why:"Free, 12 acres of sculpture under the oaks at City Park, next to NOMA." },
   { p:"longuevue", cat:"see", title:"Longue Vue House & Gardens", why:"$35, 75-min tours on the half hour. Pairs with Metairie Cemetery." },
@@ -238,7 +239,7 @@ const EXTRAS = [
   { p:"algiers", cat:"see", title:"Algiers Point", why:"Take the $2 ferry, walk the levee, come back at sunset." },
   { p:"superdome", cat:"event", title:"Saints vs. Browns", why:"Sunday Nov 8, noon kickoff, Superdome. Trade Po-Boy Fest for football if you must. Resale tickets only." },
   { p:"beignetfest", cat:"event", title:"Beignet Fest", why:"Sat Nov 7, 10–6, City Park, $20 advance. The Bayou Bacchanal fallback." },
-  { p:"tipitinas", cat:"music", title:"Tipitina's", why:"The most famous room in the city. Fri Nov 6: Bowling For Soup 7:30. Sat Nov 7: Dinosaur Jr. Uptown, $15 Uber." },
+  { p:"tipitinas", cat:"music", title:"Tipitina's", why:"The most famous room in the city. Fri Nov 6: Bowling For Soup 7:30. Sat Nov 7: Dinosaur Jr. Uptown, $15 Lyft." },
   { p:"fillmore", cat:"music", title:"The Fillmore", why:"Thu: Thundercat. Fri–Sun: Pretty Lights (electronic), 8pm. Inside Harrah's, walkable from both hotels." },
   { p:"hob", cat:"music", title:"House of Blues", why:"Fri: Jon B (R&B). Sun: Hawthorne Heights (emo). Decatur St." },
   { p:"dba", cat:"music", title:"d.b.a.", why:"Frenchmen. Soul Rebels Fri 10pm, Corey Henry & the Trémé Funktet Mon 9:30. Funk, not jazz." },
@@ -320,6 +321,7 @@ function mapBtns(p,cls=''){
   if(!p||!p.ll) return '';
   const [la,ln]=p.ll, q=encodeURIComponent(p.name), addr=encodeURIComponent(p.addr);
   return `<a class="btn ${cls}" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${la},${ln}&dirflg=w&q=${q}">Directions</a>
+  <a class="btn ${cls}" target="_blank" rel="noopener" href="https://lyft.com/ride?id=lyft&destination[latitude]=${la}&destination[longitude]=${ln}">Lyft</a>
   <a class="btn ${cls}" target="_blank" rel="noopener" href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${la}&dropoff[longitude]=${ln}&dropoff[nickname]=${q}&dropoff[formatted_address]=${addr}">Uber</a>`;
 }
 function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800); }
