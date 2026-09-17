@@ -272,6 +272,37 @@ const EXTRAS = [
 // who: "n" Noel, "m" Malinda, "both"
 // What you actually have on site. oh = machine hours where the property publishes them;
 // where it does not, say so rather than guess.
+const MENUS={
+"cochon": "https://cochonrestaurant.com/menus/",
+"brennans": "https://www.brennansneworleans.com/menus/",
+"antoines": "https://antoines.com/menu/",
+"galatoires": "https://www.galatoires.com/menus",
+"commanders": "https://www.commanderspalace.com/menus",
+"mothers": "https://mothersrestaurant.net/menu/",
+"napoleon": "https://www.napoleonhouse.com/menu",
+"cdm": "https://shop.cafedumonde.com/pages/menu",
+"lildizzy": "https://lildizzyscafe.net/menu/",
+"williemae": "https://www.williemaesnola.com/",
+"central": "https://www.centralgrocery.com/",
+"compere": "https://www.comperelapin.com/",
+"cochonbutcher": "https://www.cochonbutcher.com/",
+"bacchanal": "https://www.bacchanalwine.com/",
+"patobs": "https://www.patobriens.com/",
+"lafittes": "https://www.lafittesblacksmithshop.com/",
+"tujagues": "https://www.tujaguesrestaurant.com/",
+"french75": "https://www.arnaudsrestaurant.com/",
+"portofcall": "https://www.portofcallnola.com/",
+"turkeywolf": "https://www.turkeyandthewolf.com/",
+"parkway": "https://parkwaypoorboys.com/",
+"toups": "https://www.toupsmeatery.com/",
+"jacquesimos": "https://www.jacques-imos.com/",
+"carousel": "https://hotelmonteleone.com/dining/carousel-bar/",
+"absinthe": "https://www.oldabsinthehouse.com/",
+"columns": "https://www.thecolumns.com/",
+"cure": "https://www.curenola.com/",
+"cafebeignet": "https://www.cafebeignet.com/"
+};
+
 const HOTELS = [
  {p:"nopsi", nights:"Thu Nov 5 \u2013 Sun Nov 8", conf:"75045SG423265",
   room:"Deluxe King \u00b7 374\u2013498 sq ft \u00b7 I Prefer Exclusive rate",
@@ -414,6 +445,13 @@ function mapBtns(p,cls=''){
   <a class="btn ${cls}" target="_blank" rel="noopener" href="https://lyft.com/ride?id=lyft&destination[latitude]=${la}&destination[longitude]=${ln}">Lyft</a>
   <a class="btn ${cls}" target="_blank" rel="noopener" href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${la}&dropoff[longitude]=${ln}&dropoff[nickname]=${q}&dropoff[formatted_address]=${addr}">Uber</a>`;
 }
+function menuBtn(pid,cls=''){
+  const p=place(pid); if(!p) return '';
+  if(!(p.cat==='food'||p.cat==='bar')) return '';
+  const url = (typeof MENUS!=='undefined' && MENUS[pid]) ? MENUS[pid]
+    : 'https://www.google.com/search?q='+encodeURIComponent(p.name+' New Orleans menu');
+  return `<a class="btn ${cls}" target="_blank" rel="noopener" href="${url}">Menu</a>`;
+}
 function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800); }
 function nowCT(){ const d=new Date(); const p=new Intl.DateTimeFormat('en-US',{timeZone:TRIP.tz,hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',weekday:'short'}).formatToParts(d); const o={}; p.forEach(x=>o[x.type]=x.value); return {date:`${o.year}-${o.month}-${o.day}`,hm:`${o.hour==='24'?'00':o.hour}:${o.minute}`,wd:o.weekday}; }
 function tripDayIndex(){ const n=nowCT(); let i=DAYS.findIndex(d=>d.date===n.date); if(i<0){ // before 5am, still "last night"
@@ -443,7 +481,7 @@ function stopHTML(s,isNext){
       <h3>${esc(s.title)}${s.status?`<span class="tag ${s.status}">${s.status==='booked'?'Booked':s.status==='book'?'Book':'Walk in'}</span>`:''}${s.custom?'<span class="tag custom">Added</span>':''}</h3>
       <div class="where">${p?esc(p.addr.replace(/, New Orleans.*$/,'')) + ' · ':''}${esc(s.where||'')}${here&&p?` · <b>${distStr(p.ll)}</b>`:''}</div>
       <div class="more">${esc(s.note||'')}${s.dress?`<span class="dress">${esc(s.dress)}</span>`:''}
-        <div class="actions">${mapBtns(p)}${s.link?`<a class="btn" target="_blank" rel="noopener" href="${esc(s.link)}">Book / site</a>`:''}${s.alt&&place(s.alt)?`<button class="btn" data-alt="${esc(s.alt)}">Alt: ${esc(place(s.alt).name)}</button>`:''}${st?`<button class="btn" data-undo="${esc(s.key)}">Undo</button>`:`<button class="btn skip" data-skip="${esc(s.key)}">Skip</button>`}${s.custom?`<button class="btn" data-del="${esc(s.key)}">Remove</button>`:''}</div>
+        <div class="actions">${mapBtns(p)}${menuBtn(s.p)}${s.link?`<a class="btn" target="_blank" rel="noopener" href="${esc(s.link)}">Book / site</a>`:''}${s.alt&&place(s.alt)?`<button class="btn" data-alt="${esc(s.alt)}">Alt: ${esc(place(s.alt).name)}</button>`:''}${st?`<button class="btn" data-undo="${esc(s.key)}">Undo</button>`:`<button class="btn skip" data-skip="${esc(s.key)}">Skip</button>`}${s.custom?`<button class="btn" data-del="${esc(s.key)}">Remove</button>`:''}</div>
       </div>
     </div>
     <button class="tick" data-done="${esc(s.key)}" aria-label="Mark done">${st==='done'?'✓':st==='skipped'?'–':''}</button>
@@ -524,7 +562,7 @@ function renderExplore(){
    <p class="note">Knows the date, the time, where you are, what's already planned, and the rules (no seafood, jazz is Malinda's, pianos and blues are shared).</p></div>
   <div class="cats">${cats.map(c=>`<button class="chip ${c===curCat?'on':''}" data-cat="${c}">${c==='all'?'All':CAT[c]}</button>`).join('')}</div>
   <div class="cats"><button class="chip ${onlyWalk?'on':''}" data-f="walk">No reservation</button><button class="chip ${onlyOpen?'on':''}" data-f="open">Open now</button><span class="note" style="align-self:center;margin-left:6px">${list.length} spot${list.length===1?'':'s'}</span></div>
-  ${list.map(e=>`<div class="card"><h3>${esc(e.title)} <span class="tag walk">${CAT[e.cat]}</span>${e.wk?' <span class="tag walk">walk in</span>':' <span class="tag book">book ahead</span>'}</h3><p class="why">${esc(e.why)}</p><div class="meta">${esc(e.pl.addr.replace(/, New Orleans.*$/,''))}${here?' · <b>'+distStr(e.pl.ll)+'</b>':''}${e.os?' · <b>'+e.os.txt+'</b>':(e.hn?'':' · hours not verified')}${e.hn?' · '+esc(e.hn):''}</div><div class="row">${mapBtns(e.pl)}<button class="btn" data-add="${e.p}" data-title="${esc(e.title)}" data-cat="${e.cat}">+ Add to today</button></div></div>`).join('')}`;
+  ${list.map(e=>`<div class="card"><h3>${esc(e.title)} <span class="tag walk">${CAT[e.cat]}</span>${e.wk?' <span class="tag walk">walk in</span>':' <span class="tag book">book ahead</span>'}</h3><p class="why">${esc(e.why)}</p><div class="meta">${esc(e.pl.addr.replace(/, New Orleans.*$/,''))}${here?' · <b>'+distStr(e.pl.ll)+'</b>':''}${e.os?' · <b>'+e.os.txt+'</b>':(e.hn?'':' · hours not verified')}${e.hn?' · '+esc(e.hn):''}</div><div class="row">${mapBtns(e.pl)}${menuBtn(e.p)}<button class="btn" data-add="${e.p}" data-title="${esc(e.title)}" data-cat="${e.cat}">+ Add to today</button></div></div>`).join('')}`;
 }
 function askDefault(){ const n=nowCT(); const h=Number(n.hm.slice(0,2)); return h<11?'Somewhere good for breakfast or coffee nearby':h<15?'A lunch spot nearby that isn\'t seafood':h<18?'Something interesting to do for the next two hours':'Live music nearby that isn\'t jazz, or a bar worth the walk'; }
 function renderBook(){
