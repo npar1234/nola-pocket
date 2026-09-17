@@ -1,10 +1,10 @@
-// BUILD:20260917-174307
+// BUILD:20260917-175320
 // Strategy: stale-while-revalidate for the app shell — the cached copy paints
 // immediately, a fresh copy is fetched in the background, and if the bytes
 // actually changed the page is told to reload. That gives instant opens AND
 // automatic updates, instead of trading one for the other.
 // Fonts and icons are cache-first so an offline open still renders correctly.
-const C = 'nola-pocket-20260917-174307';
+const C = 'nola-pocket-20260917-175320';
 const SHELL = './index.html';
 const FILES = ['./', SHELL, './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
@@ -17,11 +17,10 @@ self.addEventListener('activate', e => {
     const ks = await caches.keys();
     await Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)));
     await self.clients.claim();
-    // The worker we may be replacing was cache-first with a fixed cache name, so
-    // an installed app can hold a stale shell with no way to know it. Reload the
-    // windows ourselves. Runs once per worker version, so it cannot loop.
-    const cs = await self.clients.matchAll({ type: 'window' });
-    for (const c of cs) { try { await c.navigate(c.url); } catch (_) {} }
+    // Deliberately NOT reloading open windows here. Forcing a navigate on activate
+    // yanks the page mid-boot and leaves the tab bar dead until the next launch.
+    // Stale-while-revalidate below already refreshes the cache, so the new shell
+    // lands on the next open by itself.
   })());
 });
 
@@ -55,10 +54,8 @@ self.addEventListener('fetch', e => {
         const fresh = await res.clone().text();
         const old = cached ? await cached.clone().text() : null;
         await cache.put(SHELL, res.clone());
-        if (old !== null && old !== fresh) {
-          const cs = await self.clients.matchAll({ type: 'window' });
-          cs.forEach(c => c.postMessage({ type: 'shell-updated' }));
-        }
+        // No reload signal: the fresh copy is cached and will be served on the
+        // next open. Reloading a live page is jarring and races page init.
         return res;
       }).catch(() => null);
       if (cached) { e.waitUntil(net); return cached; }   // paint now

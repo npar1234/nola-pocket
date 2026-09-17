@@ -626,12 +626,13 @@ Reply with ONLY a JSON array of 4 to 6 objects: {"name":"","address":"street add
 renderAll(); tick(); setInterval(tick,30000); setInterval(()=>{ if(view==='now') renderNow(); },120000);
 </script>
 <script>
+// Register, and check for updates periodically. Deliberately no auto-reload:
+// reloading a live page races init and leaves the tab bar dead until relaunch.
+// The worker caches any newer shell, so it is picked up on the next open.
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").then(r=>{ r.update(); setInterval(()=>r.update(), 30*60*1000); }).catch(()=>{});
-  let reloaded=false;
-  const once=()=>{ if(reloaded) return; reloaded=true; location.reload(); };
-  navigator.serviceWorker.addEventListener("controllerchange", once);
-  // the worker tells us when the shell it fetched in the background differs
-  navigator.serviceWorker.addEventListener("message", ev=>{ if(ev.data && ev.data.type==="shell-updated") once(); });
+  navigator.serviceWorker.register("sw.js").then(r=>{
+    r.update();
+    setInterval(()=>r.update(), 30*60*1000);
+  }).catch(()=>{});
 }
 </script>
