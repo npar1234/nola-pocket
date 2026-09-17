@@ -1,15 +1,34 @@
-// BUILD:20260917-215633
-// Strategy: stale-while-revalidate for the app shell — the cached copy paints
-// immediately, a fresh copy is fetched in the background, and if the bytes
-// actually changed the page shows a tap-to-refresh bar. Instant opens AND
-// visible updates, with no forced reload racing page init.
-// Fonts and icons are cache-first so an offline open still renders correctly.
-const C = 'nola-pocket-20260917-215633';
-const SHELL = './index.html';
-const FILES = ['./', SHELL, './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
+// BUILD:20260917-220904
+// Strategy: stale-while-revalidate for the app shell. The cached copy paints
+// instantly; a fresh copy is fetched straight from the origin in the background.
+// If the bytes changed, open windows are told, and the page decides whether to
+// reload quietly (just launched, untouched) or show a tap-to-refresh bar.
+//
+// Two rules learned the hard way:
+//  1. Every fetch that fills the cache bypasses the browser HTTP cache
+//     (cache:'reload' / 'no-cache'). GitHub Pages marks files fresh for ten
+//     minutes, and a plain fetch during install was copying the OLD shell into
+//     the NEW cache, so an update looked like it never happened.
+//  2. Never re-fetch a navigation Request object with an init (browsers throw),
+//     and clone the cached response BEFORE returning it to the page — reading
+//     it afterwards throws "body already used". Both errors were being
+//     swallowed, which is why the background refresh never actually ran.
+const C = 'nola-pocket-20260917-220904';
+const SHELL = new URL('./index.html', self.location).href;
+const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(C).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil((async () => {
+    const c = await caches.open(C);
+    await Promise.all(FILES.map(async f => {
+      const res = await fetch(f, { cache: 'reload' });      // origin, never HTTP cache
+      if (!res.ok) throw new Error('precache failed: ' + f + ' ' + res.status);
+      const url = new URL(f, self.location).href;
+      await c.put(url, res.clone());
+      if (url.endsWith('/')) await c.put(SHELL, res.clone()); // './' and './index.html' are the same doc
+    }));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', e => {
@@ -17,22 +36,35 @@ self.addEventListener('activate', e => {
     const ks = await caches.keys();
     await Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)));
     await self.clients.claim();
-    // Deliberately NOT reloading open windows here. Forcing a navigate on activate
-    // yanks the page mid-boot and leaves the tab bar dead until the next launch.
-    // Stale-while-revalidate below already refreshes the cache, so the new shell
-    // lands on the next open by itself.
+    // No client.navigate() here — reloading mid-boot killed the tab bar.
   })());
 });
 
 const isFont = u => u.hostname === 'fonts.googleapis.com' || u.hostname === 'fonts.gstatic.com';
+
+async function refreshShell(oldCopy) {
+  // oldCopy is a CLONE taken before the cached response was handed to the
+  // browser. Reading the original after that throws "body already used" — and
+  // that exact error was silently killing every update check until now.
+  const res = await fetch(SHELL, { cache: 'no-cache' });   // URL string, not the navigate Request
+  if (!res || !res.ok) return null;
+  const fresh = await res.clone().text();
+  const old = oldCopy ? await oldCopy.text() : null;
+  const c = await caches.open(C);
+  await c.put(SHELL, res.clone());
+  if (old !== null && fresh !== old) {
+    const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    cs.forEach(cl => cl.postMessage({ type: 'shell-updated' }));
+  }
+  return res;
+}
 
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const u = new URL(req.url);
 
-  // Google Fonts: cache-first, so a cold offline open still has the typefaces.
-  if (isFont(u)) {
+  if (isFont(u)) {                                   // fonts: cache-first
     e.respondWith(caches.open(C).then(async c => {
       const hit = await c.match(req);
       if (hit) return hit;
@@ -49,33 +81,17 @@ self.addEventListener('fetch', e => {
     e.respondWith((async () => {
       const cache = await caches.open(C);
       const cached = await cache.match(SHELL);
-      // cache:'no-cache' forces a conditional request to the origin. Without it,
-      // GitHub Pages' max-age=600 lets the browser HTTP cache hand back a copy up
-      // to ten minutes old, so the "background refresh" could silently refetch
-      // the stale shell and the app would look like it never updated.
-      const net = fetch(req, { cache: 'no-cache' }).then(async res => {
-        if (!res || !res.ok) return res;
-        const fresh = await res.clone().text();
-        const old = cached ? await cached.clone().text() : null;
-        await cache.put(SHELL, res.clone());
-        if (old !== null && fresh !== old) {
-          // Bytes changed: tell open windows so they can offer a tap-to-refresh.
-          // We never reload for them — that raced page init and killed the tab bar.
-          const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-          cs.forEach(c => c.postMessage({ type: 'shell-updated' }));
-        }
-        return res;
-      }).catch(() => null);
-      if (cached) { e.waitUntil(net); return cached; }   // paint now
+      const oldCopy = cached ? cached.clone() : null;           // clone BEFORE returning cached
+      const net = refreshShell(oldCopy).catch(err => { console.warn('[sw] shell refresh failed', err); return null; });
+      if (cached) { e.waitUntil(net); return cached; }           // paint now, refresh behind
       return (await net) || new Response('Offline and nothing cached yet.', { status: 503 });
     })());
     return;
   }
 
-  // everything else same-origin: cache-first
+  // everything else same-origin: cache-first, but never cache an error response
   e.respondWith(caches.match(req).then(r => r || fetch(req).then(res => {
-    const cp = res.clone();
-    caches.open(C).then(c => c.put(req, cp));
+    if (res && res.ok) { const cp = res.clone(); caches.open(C).then(c => c.put(req, cp)); }
     return res;
   })));
 });

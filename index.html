@@ -701,12 +701,25 @@ if("serviceWorker" in navigator){
   }).catch(()=>{});
   // The worker posts shell-updated only when the cached shell's bytes actually
   // changed. We show a bar and let the user tap — never auto-reload.
+  // Track whether the user has started using this launch. If the fresh shell
+  // lands before they've touched anything (the usual case on wifi), reload
+  // quietly so the new version is just there. If they're already scrolling or
+  // tapping, don't yank the page — show the bar and let them choose.
+  let touched=false; const mark=()=>{touched=true;};
+  ['pointerdown','touchstart','keydown','wheel','scroll'].forEach(ev=>addEventListener(ev,mark,{passive:true,once:true}));
+  // One quiet reload per launch, ever. The flag is read once at boot and cleared,
+  // so a second update in the same launch falls through to the bar instead of looping.
+  let justReloaded=false;
+  try{ justReloaded=sessionStorage.getItem('nola-just-reloaded')==='1'; sessionStorage.removeItem('nola-just-reloaded'); }catch(_){}
   navigator.serviceWorker.addEventListener('message', e=>{
-    if(e.data && e.data.type==='shell-updated'){
-      const u=document.getElementById('upd'); if(!u) return;
-      u.classList.add('show');
-      u.onclick=()=>{ u.textContent='Refreshing\u2026'; location.reload(); };
+    if(!(e.data && e.data.type==='shell-updated')) return;
+    if(!touched && !justReloaded && performance.now()<4000){
+      try{ sessionStorage.setItem('nola-just-reloaded','1'); }catch(_){}
+      location.reload(); return;
     }
+    const u=document.getElementById('upd'); if(!u) return;
+    u.classList.add('show');
+    u.onclick=()=>{ u.textContent='Refreshing\u2026'; location.reload(); };
   });
 }
 </script>
