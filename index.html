@@ -267,6 +267,40 @@ const EXTRAS = [
 // Music by house genre. House genre is stable year to year; specific acts are not —
 // re-check WWOZ Livewire (wwoz.org/calendar/livewire-music) about Oct 20 for the actual week.
 // who: "n" Noel, "m" Malinda, "both"
+// What you actually have on site. oh = machine hours where the property publishes them;
+// where it does not, say so rather than guess.
+const HOTELS = [
+ {p:"nopsi", nights:"Thu Nov 5 \u2013 Sun Nov 8", conf:"75045SG423265",
+  room:"Deluxe King \u00b7 374\u2013498 sq ft \u00b7 I Prefer Exclusive rate",
+  story:"The 1927 New Orleans Public Service headquarters \u2014 nine stories of Art Deco by Favrot and Livaudais, built around daylight, which is why every room here faces outward. Historic Hotels of America and the LVX collection.",
+  use:[
+   "$35/night destination charge is already paid \u2014 it includes TWO DRINK VOUCHERS a night. Use them.",
+   "$50 hotel credit from the I Prefer rate.",
+   "$20 per person daily breakfast credit.",
+  ],
+  outlets:[
+   {n:"Above the Grid", what:"Rooftop bar and pool deck \u2014 cocktails, poolside food, DJs and live music some nights. Skyline and Superdome views.", hn:"Hours vary by season \u2014 ask at the desk"},
+   {n:"Public Service", what:"The main restaurant, off the lobby.", hn:"Ask at the desk"},
+   {n:"Henry\u2019s Gin Bar", what:"Small gin-focused bar in the building.", hn:"Ask at the desk"},
+  ],
+  amen:["Rooftop pool with cabanas","Fitness centre \u2014 Peloton bikes, free weights, towels, fruit","Concierge and bell service","Turndown on request","Welcome gift at check-in","In-room dining","Valet parking (you won\u2019t need it)","Pet friendly"]},
+ {p:"virgin", nights:"Sun Nov 8 \u2013 Tue Nov 10", conf:"Chase Travel \u00b7 The Edit",
+  room:"Chamber \u00b7 sliding door between dressing area and bed",
+  story:"Purpose-built, opened 2021. Voted #3 best hotel in New Orleans by Travel + Leisure\u2019s 2026 World\u2019s Best Awards. Two blocks down Baronne from NOPSI \u2014 the Sunday move is a 4-minute walk.",
+  use:[
+   "Breakfast for two daily, included through The Edit.",
+   "$100 property credit \u2014 spend it at Commons Club or the Pool Club.",
+   "Late checkout, which matters Tuesday with a 2:30pm flight.",
+  ],
+  outlets:[
+   {n:"The Pool Club", what:"13th-floor rooftop pool and bar. Pool access until 6pm, drinks until 9.", oh:"Mo-Su 10:00-21:00", hn:"Daily 10am\u20139pm \u00b7 pool until 6pm"},
+   {n:"Commons Club", what:"Main-level restaurant and bar. Chef Alex Harrell \u2014 Southern seasonal with a Mediterranean lean.", oh:"Mo-Su 17:00-22:00", hn:"Dinner daily 5\u201310pm"},
+   {n:"Funny Library Coffee Shop", what:"First floor. La Colombe coffee, breakfast, games and books from local shops. Your Tuesday breakfast.", oh:"Mo-Su 07:00-12:00", hn:"Daily 7am\u2013noon"},
+   {n:"The Shag Room", what:"Small velvet cocktail lounge off the Commons Club.", hn:"Evenings \u00b7 ask at the desk"},
+  ],
+  amen:["13th-floor rooftop pool","Fitness centre","Commons Club social space","Late checkout via The Edit"]},
+];
+
 const MUSIC = [
  {g:"Dueling pianos", who:"both", v:[
    {p:"patobs", nights:"Sat 1pm\u20132am, nightly otherwise", entry:"Walk in", note:"Two pianos, every request shouted back. Hurricanes were invented here. On the plan Saturday 10pm."},
@@ -497,6 +531,24 @@ function renderBook(){
 function renderInfo(){
   $('#v-info').innerHTML=`<h2 class="h2">${TRIP.title}</h2><p class="sub">${TRIP.dates}</p>
   <div class="facts">${TRIP.facts.map(f=>`<div><small>${esc(f[0])}</small><b>${esc(f[1])}</b><span>${esc(f[2])}</span></div>`).join('')}</div>
+  <h2 class="h2">Where you\u2019re staying</h2>
+  <p class="sub">What you already have on site \u2014 and what you\u2019ve already paid for.</p>
+  ${HOTELS.map(h=>{const p=place(h.p); return `<div class="card">
+    <h3>${esc(p?p.name:h.p)} <span class="tag booked">${esc(h.nights)}</span></h3>
+    <div class="meta">${esc(p?p.addr.replace(/, New Orleans.*$/,''):'')} \u00b7 ${esc(h.conf)}${here&&p?' \u00b7 <b>'+distStr(p.ll)+'</b>':''}</div>
+    <p class="why">${esc(h.room)}</p>
+    <p class="why" style="opacity:.85">${esc(h.story)}</p>
+    <p class="eyebrow" style="margin-top:10px">Don\u2019t leave this on the table</p>
+    ${h.use.map(u=>`<div class="where" style="color:var(--ink)">\u2022 ${esc(u)}</div>`).join('')}
+    <p class="eyebrow" style="margin-top:10px">Food and drink on site</p>
+    ${h.outlets.map(o=>{const os=openState(o.oh); return `<div class="stop" style="grid-template-columns:1fr"><div class="body">
+      <h3 style="font-size:.95rem">${esc(o.n)}${os?` <span class="tag ${os.open?'booked':'walk'}">${os.txt}</span>`:''}</h3>
+      <div class="where">${esc(o.hn||'')}</div>
+      <div class="where" style="color:var(--ink);opacity:.85">${esc(o.what)}</div></div></div>`;}).join('')}
+    <p class="eyebrow" style="margin-top:10px">Amenities</p>
+    <p class="why">${h.amen.map(a=>esc(a)).join(' \u00b7 ')}</p>
+    <div class="row">${mapBtns(p)}</div>
+  </div>`;}).join('')}
   <h2 class="h2">Music, by what they actually play</h2>
   <p class="sub">House genre, which is stable. Specific acts are not — re-check WWOZ Livewire around Oct 20 for the real week.</p>
   <div class="cats">${['all','both','n','m'].map(w=>`<button class="chip ${w===whoFilter?'on':''}" data-who="${w}">${w==='all'?'Everything':w==='both'?'Both of you':w==='n'?'Noel':'Malinda'}</button>`).join('')}</div>
