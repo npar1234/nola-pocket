@@ -273,34 +273,44 @@ const EXTRAS = [
 // What you actually have on site. oh = machine hours where the property publishes them;
 // where it does not, say so rather than guess.
 const MENUS={
-"cochon": "https://cochonrestaurant.com/menus/",
+// Direct menu pages, each verified to load the actual menu (not the homepage).
+"cochon": "https://cochonrestaurant.com/menus/lunch-and-dinner/",
 "brennans": "https://www.brennansneworleans.com/menus/",
-"antoines": "https://antoines.com/menu/",
+"antoines": "https://antoines.com/menu",
 "galatoires": "https://www.galatoires.com/menus",
 "commanders": "https://www.commanderspalace.com/menus",
-"mothers": "https://mothersrestaurant.net/menu/",
-"napoleon": "https://www.napoleonhouse.com/menu",
-"cdm": "https://shop.cafedumonde.com/pages/menu",
-"lildizzy": "https://lildizzyscafe.net/menu/",
-"williemae": "https://www.williemaesnola.com/",
-"central": "https://www.centralgrocery.com/",
-"compere": "https://www.comperelapin.com/",
-"cochonbutcher": "https://www.cochonbutcher.com/",
-"bacchanal": "https://www.bacchanalwine.com/",
-"patobs": "https://www.patobriens.com/",
-"lafittes": "https://www.lafittesblacksmithshop.com/",
-"tujagues": "https://www.tujaguesrestaurant.com/",
-"french75": "https://www.arnaudsrestaurant.com/",
-"portofcall": "https://www.portofcallnola.com/",
-"turkeywolf": "https://www.turkeyandthewolf.com/",
-"parkway": "https://parkwaypoorboys.com/",
-"toups": "https://www.toupsmeatery.com/",
-"jacquesimos": "https://www.jacques-imos.com/",
-"carousel": "https://hotelmonteleone.com/dining/carousel-bar/",
-"absinthe": "https://www.oldabsinthehouse.com/",
-"columns": "https://www.thecolumns.com/",
-"cure": "https://www.curenola.com/",
-"cafebeignet": "https://www.cafebeignet.com/"
+"mothers": "https://mothersrestaurant.net/menus/",
+"napoleon": "https://www.napoleonhouse.com/main-menu/",
+"cdm": "https://shop.cafedumonde.com/cafe/",
+"lildizzy": "https://lildizzyscafe.net/new-orleans-treme-lil-dizzys-cafe-food-menu",
+"williemae": "https://williemaesnola.com/menu-1",
+"dooky": "https://www.dookychaserestaurants.com/our-menu",
+"central": "https://centralgrocery.com/in-store-menu/",
+"compere": "https://www.comperelapin.com/menus.html",
+"cochonbutcher": "https://cochonbutcher.com/menus-2/",
+"bacchanal": "https://www.bacchanalwine.com/menu-marquee",
+"tujagues": "https://tujaguesrestaurant.com/menus/",
+"french75": "https://www.arnaudsrestaurant.com/menus/french-75-menu/",
+"portofcall": "https://portofcallnola.com/menu/",
+"turkeywolf": "https://cdn.shopify.com/s/files/1/0839/9971/9716/files/TURKEY_AND_THE_WOLF_ONLINE_MENU2025.pdf",
+"parkway": "https://parkwaypoorboys.com/new-orleans-parkway-bakery-and-tavern-food-menu",
+"toups": "https://toupsmeatery.com/menu/",
+"jacquesimos": "https://jacques-imos.com/jacques-imos-menu/",
+"carousel": "https://www.hotelmonteleone.com/dine-drink/carousel-bar/",
+"columns": "https://thecolumns.com/restaurant-bar/",
+"cure": "https://www.curenola.com/menus",
+"cafebeignet": "https://www.cafebeignet.com/menus/",
+"erinrose": "https://www.erinrosebar.com/bar-food",
+"sazerac": "https://therooseveltneworleans.com/dining/sazerac-bar-menu/",
+"absinthe": "https://www.ruebourbon.com/old-absinthe-house",
+"patobs": "https://patobriens.com/drinks/",
+"commonsclub": "https://virginhotels.com/new-orleans/eat-drink/commons-club/",
+// null = the place publishes no menu anywhere online (checked site, sitemap and
+// search). Suppress the button rather than send him to a homepage or a scraper.
+"lafittes": null,
+"snakejake": null,
+"pyrates": null,
+"chartroom": null
 };
 
 const HOTELS = [
@@ -447,8 +457,14 @@ function mapBtns(p,cls=''){
 }
 function menuBtn(pid,cls=''){
   const p=place(pid); if(!p) return '';
-  if(!(p.cat==='food'||p.cat==='bar')) return '';
-  const url = (typeof MENUS!=='undefined' && MENUS[pid]) ? MENUS[pid]
+  const M = (typeof MENUS!=='undefined') ? MENUS : {};
+  const has = Object.prototype.hasOwnProperty.call(M,pid);
+  // explicit null = this place publishes no menu online; show nothing rather
+  // than a button that dumps you on a homepage or a scraped-menu site.
+  if(has && !M[pid]) return '';
+  // a MENUS entry wins over category, so a music room with a bar menu gets one
+  if(!has && !(p.cat==='food'||p.cat==='bar')) return '';
+  const url = has ? M[pid]
     : 'https://www.google.com/search?q='+encodeURIComponent(p.name+' New Orleans menu');
   return `<a class="btn ${cls}" target="_blank" rel="noopener" href="${url}">Menu</a>`;
 }
