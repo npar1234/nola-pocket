@@ -1,10 +1,10 @@
-// BUILD:20260917-214709
+// BUILD:20260917-215448
 // Strategy: stale-while-revalidate for the app shell — the cached copy paints
 // immediately, a fresh copy is fetched in the background, and if the bytes
-// actually changed the page is told to reload. That gives instant opens AND
-// automatic updates, instead of trading one for the other.
+// actually changed the page shows a tap-to-refresh bar. Instant opens AND
+// visible updates, with no forced reload racing page init.
 // Fonts and icons are cache-first so an offline open still renders correctly.
-const C = 'nola-pocket-20260917-214709';
+const C = 'nola-pocket-20260917-215448';
 const SHELL = './index.html';
 const FILES = ['./', SHELL, './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
@@ -49,13 +49,21 @@ self.addEventListener('fetch', e => {
     e.respondWith((async () => {
       const cache = await caches.open(C);
       const cached = await cache.match(SHELL);
-      const net = fetch(req).then(async res => {
+      // cache:'no-cache' forces a conditional request to the origin. Without it,
+      // GitHub Pages' max-age=600 lets the browser HTTP cache hand back a copy up
+      // to ten minutes old, so the "background refresh" could silently refetch
+      // the stale shell and the app would look like it never updated.
+      const net = fetch(req, { cache: 'no-cache' }).then(async res => {
         if (!res || !res.ok) return res;
         const fresh = await res.clone().text();
         const old = cached ? await cached.clone().text() : null;
         await cache.put(SHELL, res.clone());
-        // No reload signal: the fresh copy is cached and will be served on the
-        // next open. Reloading a live page is jarring and races page init.
+        if (old !== null && fresh !== old) {
+          // Bytes changed: tell open windows so they can offer a tap-to-refresh.
+          // We never reload for them — that raced page init and killed the tab bar.
+          const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+          cs.forEach(c => c.postMessage({ type: 'shell-updated' }));
+        }
         return res;
       }).catch(() => null);
       if (cached) { e.waitUntil(net); return cached; }   // paint now
