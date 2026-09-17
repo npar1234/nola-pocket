@@ -1,4 +1,4 @@
-// BUILD:20260917-220904
+// BUILD:20260917-221628
 // Strategy: stale-while-revalidate for the app shell. The cached copy paints
 // instantly; a fresh copy is fetched straight from the origin in the background.
 // If the bytes changed, open windows are told, and the page decides whether to
@@ -13,7 +13,7 @@
 //     and clone the cached response BEFORE returning it to the page — reading
 //     it afterwards throws "body already used". Both errors were being
 //     swallowed, which is why the background refresh never actually ran.
-const C = 'nola-pocket-20260917-220904';
+const C = 'nola-pocket-20260917-221628';
 const SHELL = new URL('./index.html', self.location).href;
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 

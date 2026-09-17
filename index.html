@@ -695,9 +695,19 @@ renderAll(); tick(); setInterval(tick,30000); setInterval(()=>{ if(view==='now')
 // reloading a live page races init and leaves the tab bar dead until relaunch.
 // The worker caches any newer shell, so it is picked up on the next open.
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").then(r=>{
+  // updateViaCache:'none' — never let iOS serve a stale sw.js from its HTTP cache.
+  navigator.serviceWorker.register("sw.js",{updateViaCache:'none'}).then(r=>{
     r.update();
     setInterval(()=>r.update(), 30*60*1000);
+    // iOS "closes" a home-screen app by suspending it, so a relaunch is usually a
+    // resume with no page load and no update check. Run the check on every
+    // return to the foreground instead: re-check sw.js, and re-fetch the shell
+    // through the worker so its compare-and-notify path runs.
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState!=='visible') return;
+      r.update();
+      fetch('index.html',{cache:'no-cache'}).catch(()=>{});
+    });
   }).catch(()=>{});
   // The worker posts shell-updated only when the cached shell's bytes actually
   // changed. We show a bar and let the user tap — never auto-reload.
