@@ -1,10 +1,10 @@
-// BUILD:20260917-215448
+// BUILD:20260917-215633
 // Strategy: stale-while-revalidate for the app shell — the cached copy paints
 // immediately, a fresh copy is fetched in the background, and if the bytes
 // actually changed the page shows a tap-to-refresh bar. Instant opens AND
 // visible updates, with no forced reload racing page init.
 // Fonts and icons are cache-first so an offline open still renders correctly.
-const C = 'nola-pocket-20260917-215448';
+const C = 'nola-pocket-20260917-215633';
 const SHELL = './index.html';
 const FILES = ['./', SHELL, './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
