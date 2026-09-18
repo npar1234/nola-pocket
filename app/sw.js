@@ -1,10 +1,10 @@
-// BUILD:20260918-143900
+// BUILD:20260918-144200
 // Network-first for the app shell: every open asks the server for the page
 // (conditional request, so a 304 costs almost nothing) and falls back to the
 // cached copy only if the network fails or takes more than 4s. There is no
 // update detection, no reload, no banner — the page you see is always the one
 // on the server. Fonts and icons are cache-first so an offline open still renders.
-const C = 'nola-pocket-20260918-143900';
+const C = 'nola-pocket-20260918-144200';
 const SHELL = new URL('./index.html', self.location).href;
 const STATIC = ['./manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
