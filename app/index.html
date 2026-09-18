@@ -694,6 +694,7 @@ renderAll(); tick(); setInterval(tick,30000); setInterval(()=>{ if(view==='now')
 if("serviceWorker" in navigator){
   // Network-first worker: the page is fetched fresh on every open, cache is the
   // offline fallback only. Nothing else to do here.
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>{ if(!/\/app\/$/.test(r.scope)) r.unregister(); })).catch(()=>{});
   navigator.serviceWorker.register("sw.js",{updateViaCache:'none'}).catch(()=>{});
 }
 </script>
